@@ -8,14 +8,14 @@ const fs = require("fs-extra");
 const buildPath = path.resolve(__dirname, "build");
 fs.removeSync(buildPath);
 
-//read 'contract.sol' from the 'contracts' folder
-const contractPath = path.resolve(__dirname, "contracts", "contract.sol");
-const source = fs.readFileSync(contractPath, "utf-8");
+//read 'intelifactory.sol' from the 'contracts' folder
+const smartWillPath = path.resolve(__dirname, "contracts", "intelifactory.sol");
+const source = fs.readFileSync(smartWillPath, "utf-8");
 
 const input = {
   language: "Solidity",
   sources: {
-    "contract.sol": {
+    "intelifactory.sol": {
       content: source,
     },
   },
@@ -30,7 +30,7 @@ const input = {
 
 //compile contracts therein with solidity compiler
 const output = JSON.parse(solc.compile(JSON.stringify(input))).contracts[
-  "contract.sol"
+  "intelifactory.sol"
 ];
 
 //write output to the 'build' directory
