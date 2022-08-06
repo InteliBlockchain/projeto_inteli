@@ -82,3 +82,47 @@ contract Person {
         return activities[activityType][date];
     }
 }
+
+contract AccessCampus {
+    struct Access {
+        address userAddress;
+        uint256 time;
+    }
+    mapping(string => Access[]) entries;
+
+    mapping(string => Access[]) exits;
+
+    function logsAccess(
+        address userAddress,
+        uint256 time,
+        string memory date
+    ) public {
+        Access memory entry = Access({userAddress: userAddress, time: time});
+        entries[date].push(entry);
+    }
+
+    function logExits(
+        address userAddress,
+        uint256 time,
+        string memory date
+    ) public {
+        Access memory exit = Access({userAddress: userAddress, time: time});
+        exits[date].push(exit);
+    }
+
+    function GetStudentEntries(string memory date)
+        public
+        view
+        returns (Access[] memory)
+    {
+        return entries[date];
+    }
+
+    function GetStudentExits(string memory date)
+        public
+        view
+        returns (Access[] memory)
+    {
+        return exits[date];
+    }
+}
