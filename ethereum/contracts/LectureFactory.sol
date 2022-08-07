@@ -14,12 +14,11 @@ contract LectureFactory{
 
     LectureStruct[] public lectures;
 
-
     constructor () {
         owner = msg.sender;
     }
 
-    function createLecture(string memory _lectureName,address[] memory _arrayUsers, string memory _ipfsAddress) public {
+    function createLecture(string memory _lectureName,address[] memory _arrayUsers, string memory _ipfsAddress) public returns(address){
         require(msg.sender == owner);
         Lecture mintLecture = new Lecture (_arrayUsers, _ipfsAddress);
 
@@ -29,6 +28,8 @@ contract LectureFactory{
         });
 
         lectures.push(newLecture);
+
+        return(address(mintLecture));
     }
 
 }

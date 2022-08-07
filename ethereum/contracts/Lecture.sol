@@ -16,7 +16,7 @@ contract Lecture is ERC1155 {
         owner = msg.sender;
         people = _arrayUsers;
         for (uint256 i = 0; i >= _arrayUsers.length; i++) {
-            _mint(_arrayUsers[i], 1, _arrayUsers.length, "");
+            _mint(_arrayUsers[i], 1, 1, "");
         }
     }
 

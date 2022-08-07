@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
+
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 /*
 Person contract: manage person profile and track activities
     . state variables
@@ -9,11 +11,17 @@ Person contract: manage person profile and track activities
         - activities: log activities done by person
     . methods: create and retrieve events and register in state variable
 */
-contract Person {
+contract Person is ERC1155Holder {
     address owner;
+
+    struct activitiesStruct {
+        string name;
+        address activityAddress;
+    }
+
     mapping(string => uint64[]) private campusCheckIn;
     mapping(string => uint64[]) private campusCheckOut;
-    mapping(string => mapping(string => address[])) public activities;
+    mapping(string => activitiesStruct[]) public activities;
 
     constructor(address _owner) {
         owner = _owner;
@@ -49,23 +57,26 @@ contract Person {
 
     function newActivity(
         string memory _activityType,
-        string memory _date,
-        address _activityAdress
+        string memory _activityName,
+        address _activityAddress
     ) public {
         require(msg.sender == owner);
-        activities[_activityType][_date].push(_activityAdress);
+        activities[_activityType].push(activitiesStruct({
+            name: _activityName,
+            activityAddress: _activityAddress
+        }));
     }
 
-    function getActivity(string memory _activityType, string memory _date)
+    function getActivities(string memory _activityType)
         public
         view
-        returns (address[] memory)
+        returns (activitiesStruct[] memory)
     {
         require(msg.sender == owner);
-        return activities[_activityType][_date];
+        return activities[_activityType];
     }
 
-    function killMe() public {
+    function eraseMe() public {
         require(msg.sender == owner);
         selfdestruct(payable(owner));
     }
