@@ -11,6 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+<<<<<<< Updated upstream
+=======
+    "@openzeppelin/contracts": "^4.7.2",
+    "@truffle/hdwallet-provider": "^2.0.11",
+>>>>>>> Stashed changes
     "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
