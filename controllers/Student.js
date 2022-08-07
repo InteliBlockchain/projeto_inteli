@@ -4,35 +4,25 @@ require("express-async-errors");
 
 const studentExists = (req, res) => {
   //Pega as infos da requisição
-  const { ra } = req.body;
+  const { ra } = req.params;
 
-  //Valida se algum paremetro é inválido
-  const errors = validationResult(req);
+  //Instancia a classe criando uma vaga
+  const Student = new studentService.Student();
 
-  if (!errors.isEmpty()) {
-    res.status(400).json({
-      error: errors.errors[0].msg,
-    });
-    return;
-  } else {
-    //Instancia a classe criando uma vaga
-    const Student = new studentService.Student();
+  //Tratamento das respostas do método da classe
+  Student.getStudent(ra).then((resul) => {
+    if (resul.type === "error") {
+      res.status(500).json({
+        error: resul.message,
+      });
+    } else {
+      res.status(200).json({
+        message: resul.message,
+      });
+    }
+  });
 
-    //Tratamento das respostas do método da classe
-    Student.getStudent(ra).then((resul) => {
-      if (resul.type === "error") {
-        res.status(500).json({
-          error: resul.message,
-        });
-      } else {
-        res.status(200).json({
-          message: resul.message,
-        });
-      }
-    });
-
-    return user;
-  }
+  return Student;
 };
 
 const createStudent = (req, res) => {
@@ -64,12 +54,36 @@ const createStudent = (req, res) => {
       }
     });
 
-    return user;
+    return Student;
   }
+};
+
+const deleteStudent = (req, res) => {
+  //Pega as infos da requisição
+  const { ra } = req.param;
+
+  //Instancia a classe criando uma vaga
+  const Student = new studentService.Student();
+
+  //Tratamento das respostas do método da classe
+  Student.deleteStudent(ra).then((resul) => {
+    if (resul.type === "error") {
+      res.status(500).json({
+        error: resul.message,
+      });
+    } else {
+      res.status(200).json({
+        message: resul.message,
+      });
+    }
+  });
+
+  return Student;
 };
 
 //Exporta as funções do controller para o ROUTER
 module.exports = {
   studentExists,
   createStudent,
+  deleteStudent
 };

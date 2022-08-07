@@ -3,9 +3,18 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 class Student {
-  getStudent(ra) {}
+  getStudent(ra) {
+    //WEB3 Aqui
+  }
 
-  createStudent(ra) {}
+  createStudent(ra) {
+    //WEB3 Aqui
+  }
+
+  deleteStudent(ra) {
+    //WEB3 Aqui
+    //Chamada para os contratos
+  }
 }
 
 module.exports = {
