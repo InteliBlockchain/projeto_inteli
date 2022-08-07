@@ -24,34 +24,33 @@ router.post(
   accessController.CheckOut
 );
 
-
 //Remover estudante
 router.post(
-    "/accesses",
-    [body("ra", "RA é necessário").exists({ checkFalsy: true })],
-    [body("date", "Data é necessário").exists({ checkFalsy: true })],
-    studentAuth.unsureAuthenticated,
-    accessController.Accesses
+  "/accesses",
+  [body("ra", "RA é necessário").exists({ checkFalsy: true })],
+  [body("date", "Data é necessário").exists({ checkFalsy: true })],
+  studentAuth.unsureAuthenticated,
+  accessController.Accesses
 );
 
 router.post(
-    "/exits",
-    [body("ra", "RA é necessário").exists({ checkFalsy: true })],
-    [body("date", "Data é necessário").exists({ checkFalsy: true })],
-    studentAuth.unsureAuthenticated,
-    accessController.Exits
+  "/exits",
+  [body("ra", "RA é necessário").exists({ checkFalsy: true })],
+  [body("date", "Data é necessário").exists({ checkFalsy: true })],
+  studentAuth.unsureAuthenticated,
+  accessController.Exits
 );
 
 router.get(
-    "/allAccesses/:date",
-    studentAuth.unsureAuthenticated,
-    accessController.AllAccesses
+  "/allAccesses/:date",
+  studentAuth.unsureAuthenticated,
+  accessController.AllAccesses
 );
 
 router.get(
-    "/allExits/:date",
-    studentAuth.unsureAuthenticated,
-    accessController.AllExits
+  "/allExits/:date",
+  studentAuth.unsureAuthenticated,
+  accessController.AllExits
 );
 
 //Exporta o ROUTER

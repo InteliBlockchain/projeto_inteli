@@ -1,15 +1,13 @@
 //npm module
-const { web3 } = require("./web3");
+import web3 from "./web3";
 //compiled smart contract
-const inteliFactory = require("./build/InteliFactory.json");
+import accessCampus from "./build/AccessCampus.json";
 
 //pass address of the 'factory' to web3
 //TODO: declare address as ENV variable
 const instance = new web3.eth.Contract(
   inteliFactory.abi,
-  "0xEC2176331a7ff053309d074888e2b30d83531d88"
+  "0xD1Ec1c600eD19fe4E5B32b5fD22f8228Af461912"
 );
 
-module.exports = {
-  instance,
-};
+export default instance;

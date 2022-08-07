@@ -9,8 +9,12 @@ const buildPath = path.resolve(__dirname, "build");
 fs.removeSync(buildPath);
 
 //read 'intelifactory.sol' from the 'contracts' folder
-const smartWillPath = path.resolve(__dirname, "contracts", "intelifactory.sol");
-const source = fs.readFileSync(smartWillPath, "utf-8");
+const inteliFactoryPath = path.resolve(
+  __dirname,
+  "contracts",
+  "intelifactory.sol"
+);
+const source = fs.readFileSync(inteliFactoryPath, "utf-8");
 
 const input = {
   language: "Solidity",
