@@ -27,7 +27,7 @@ contract Person is ERC1155Holder {
         owner = _owner;
     }
 
-    function newCheckIn(string memory _date, uint64 _unixTime) public {
+    function registerCheckIn(string memory _date, uint64 _unixTime) public {
         require(msg.sender == owner);
         campusCheckIn[_date].push(_unixTime);
     }
@@ -41,7 +41,7 @@ contract Person is ERC1155Holder {
         return campusCheckIn[_id];
     }
 
-    function newCheckOut(string memory _date, uint64 _unixTime) public {
+    function registerCheckOut(string memory _date, uint64 _unixTime) public {
         require(msg.sender == owner);
         campusCheckOut[_date].push(_unixTime);
     }

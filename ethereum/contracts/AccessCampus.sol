@@ -23,7 +23,7 @@ contract AccessCampus {
         owner = msg.sender;
     }
 
-    function createCheckIn(
+    function registerCheckIn(
         address _userAddress,
         uint256 _time,
         string memory _date
@@ -36,7 +36,7 @@ contract AccessCampus {
         checkIns[_date].push(checkIn);
     }
 
-    function createCheckOut(
+    function registerCheckOut(
         address _userAddress,
         uint256 _time,
         string memory _date
