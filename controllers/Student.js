@@ -4,13 +4,13 @@ require("express-async-errors");
 
 const studentExists = (req, res) => {
   //Pega as infos da requisição
-  const { ra } = req.params;
+  const { wallet } = req.params;
 
   //Instancia a classe criando uma vaga
   const Student = new studentService.Student();
 
   //Tratamento das respostas do método da classe
-  Student.getStudent(ra).then((resul) => {
+  Student.getStudent(wallet).then((resul) => {
     if (resul.type === "error") {
       res.status(500).json({
         error: resul.message,
@@ -57,6 +57,29 @@ const createStudent = (req, res) => {
     return Student;
   }
 };
+
+const getWallet = (req, res) => {
+  //Pega as infos da requisição
+  const { ra } = req.param;
+
+  //Instancia a classe criando uma vaga
+  const Student = new studentService.Student();
+
+  //Tratamento das respostas do método da classe
+  Student.getWallet(ra).then((resul) => {
+    if (resul.type === "error") {
+      res.status(500).json({
+        error: resul.message,
+      });
+    } else {
+      res.status(200).json({
+        message: resul.message,
+      });
+    }
+  });
+
+  return Student;
+} 
 
 const deleteStudent = (req, res) => {
   //Pega as infos da requisição
@@ -263,6 +286,7 @@ const AllExits = (req, res) => {
 module.exports = {
   studentExists,
   createStudent,
+  getWallet,
   deleteStudent,
   CheckIn,
   CheckOut,
