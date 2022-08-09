@@ -76,9 +76,25 @@ class Student {
         })
     }
 
-    async accesses(ra) {}
-
-    async exits(ra) {}
+    async accesses(ra,date) {
+        const wallet = await inteliFactory.methods.getWallet(ra).call({
+          from: accounts[0],
+      })
+        const times = await person.methods.getCheckIn(wallet,date).call({
+          from: accounts[0],
+        })  
+        return times
+      }
+  
+      async exits(ra,date) {
+        const wallet = await inteliFactory.methods.getWallet(ra).call({
+          from: accounts[0],
+      })
+       const times =  await person.methods.getCheckOut(wallet,date).call({
+          from: accounts[0],
+        }) 
+        return times
+      }
 
     async AllAccesses() {
         const wallets = await accessCampus.methods.getStudentEntries().call({
