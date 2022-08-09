@@ -3,7 +3,7 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 
 //Importações necessárias
-const { StudentInstance: studentController } = require("../services/Student");
+const studentController = require("../controllers/Student");
 const studentAuth = require("../Middlewares/unsureAuthenticated");
 
 //ROTAS com seus respectivos controllers e middlewares
@@ -29,14 +29,14 @@ router.post(
   "/ra",
   [body("wallet", "Wallet address é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
-  studentController.getStudent
+  studentController.studentExists
 );
 
 //Remover estudante
 router.delete(
   "/:ra",
   studentAuth.unsureAuthenticated,
-  studentController.removeStudent
+  studentController.deleteStudent
 );
 
 //Registrar entrada no Campus
@@ -44,7 +44,7 @@ router.post(
   "/checkIn",
   [body("ra", "RA é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
-  studentController.checkIn
+  studentController.CheckIn
 );
 
 //Registrar saída do Campus
@@ -52,7 +52,7 @@ router.post(
   "/checkOut",
   [body("ra", "RA é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
-  studentController.checkOut
+  studentController.CheckOut
 );
 
 //Ver entradas de um estudante específico no campus em um dia
@@ -61,7 +61,7 @@ router.post(
   [body("ra", "RA é necessário").exists({ checkFalsy: true })],
   [body("date", "Data é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
-  studentController.accesses
+  studentController.Accesses
 );
 
 //Ver saídas de um estudante específico no campus em um dia
@@ -70,7 +70,7 @@ router.post(
   [body("ra", "RA é necessário").exists({ checkFalsy: true })],
   [body("date", "Data é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
-  studentController.exits
+  studentController.Exits
 );
 
 //Ver todos os estudantes que entraram no campus em um dia

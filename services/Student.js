@@ -3,49 +3,83 @@ const { web3 } = require('../ethereum/web3')
 const { instance: inteliFactory } = require('../ethereum/factory')
 
 class Student {
-    async getStudent(req, res) {
+    async getStudent(address) {
         try {
             const accounts = await web3.eth.getAccounts()
-            const ra = await inteliFactory.methods.getStudent(req.body.address).call({ from: accounts[0] })
-            res.send(ra)
+            const ra = await inteliFactory.methods.getStudent(address).call({ from: accounts[0] })
+            const success = {
+                type: "success",
+                message: ra
+            }
+            return success
         } catch (err) {
-            res.status(400).send()
+            const error = {
+                type: "error",
+                message: "Solicitação não autorizada! Tente novamente mais tarde"
+            }
+            return error
         }
     }
 
-    async getWallet(req, res) {
+    async getWallet(ra) {
         try {
             const accounts = await web3.eth.getAccounts()
-            const wallet = await inteliFactory.methods.getWallet(req.body.ra).call({ from: accounts[0] })
-            res.send(wallet)
+            const wallet = await inteliFactory.methods.getWallet(ra).call({ from: accounts[0] })
+            const success = {
+                type: "success",
+                message: wallet
+            }
+            return success
         } catch (err) {
-            res.status(400).send()
+            const error = {
+                type: "error",
+                message: "Solicitação não autorizada! Tente novamente mais tarde"
+            }
+            return error
         }
     }
 
-    async createStudent(req, res) {
+    async createStudent(ra) {
         try {
             const accounts = await web3.eth.getAccounts()
 
-            await inteliFactory.methods.createStudent(req.body.ra).send({
+            await inteliFactory.methods.createStudent(ra).send({
                 from: accounts[0],
             })
+
+            const success = {
+                type: "success",
+                message: "Aluno criado com sucesso"
+            }
+            return success
         } catch (err) {
-            res.status(400).send()
+            const error = {
+                type: "error",
+                message: "Solicitação não autorizada! Tente novamente mais tarde"
+            }
+            return error
         }
     }
 
-    async removeStudent(req, res) {
+    async removeStudent(ra) {
         try {
             const accounts = await web3.eth.getAccounts()
 
-            await inteliFactory.methods.removeStudent(req.body.ra).send({
+            await inteliFactory.methods.removeStudent(ra).send({
                 from: accounts[0],
             })
 
-            res.send()
+            const success = {
+                type: "success",
+                message: "Aluno removido com sucesso"
+            }
+            return success
         } catch (err) {
-            res.status(400).send()
+            const error = {
+                type: "error",
+                message: "Solicitação não autorizada! Tente novamente mais tarde"
+            }
+            return error
         }
         // Lembrar de executar o autodestruct do contrato person (branch do lemos)
     }
@@ -109,8 +143,6 @@ class Student {
     }
 }
 
-const StudentInstance = new Student()
-
 module.exports = {
-    StudentInstance,
+    Student
 }
