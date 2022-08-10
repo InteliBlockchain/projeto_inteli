@@ -3,7 +3,7 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 
 //Importações necessárias
-const { StudentInstance: studentController } = require("../services/Student");
+const lectureController = require("../controllers/Lectures");
 const studentAuth = require("../Middlewares/unsureAuthenticated");
 
 //ROTAS com seus respectivos controllers e middlewares
@@ -14,21 +14,21 @@ router.post(
   [body("lectureName", "Nome da palestra é necessário").exists({ checkFalsy: true })],
   [body("ras", "RA's é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
-  //Passar a função do Controller
+  lectureController.createLecture
 );
 
 //Ver todas as palestras que um aluno participou
 router.get(
   "/student/:ra",
   studentAuth.unsureAuthenticated,
-  //Passar a função do Controller
+  lectureController.getLecturesStudent
 );
 
 //Ver todas as palestras que aconteceram no Inteli
 router.get(
   "/lectures",
   studentAuth.unsureAuthenticated,
-  //Passar a função do Controller
+  lectureController.getLectures
 );
 
 //Exporta o ROUTER
