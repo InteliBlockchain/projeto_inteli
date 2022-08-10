@@ -8,57 +8,31 @@ class Student {
             const accounts = await web3.eth.getAccounts()
             const ra = await inteliFactory.methods.getStudent(address).call({ from: accounts[0] })
             const success = {
-                type: "success",
-                message: ra
+                type: 'success',
+                message: ra,
             }
             return success
         } catch (err) {
             const error = {
-                type: "error",
-                message: "Solicitação não autorizada! Tente novamente mais tarde"
+                type: 'error',
+                message: 'Solicitação não autorizada! Tente novamente mais tarde',
             }
             return error
         }
     }
 
     async getWallet(ra) {
-        try {
-            const accounts = await web3.eth.getAccounts()
-            const wallet = await inteliFactory.methods.getWallet(ra).call({ from: accounts[0] })
-            const success = {
-                type: "success",
-                message: wallet
-            }
-            return success
-        } catch (err) {
-            const error = {
-                type: "error",
-                message: "Solicitação não autorizada! Tente novamente mais tarde"
-            }
-            return error
-        }
+        const accounts = await web3.eth.getAccounts()
+        const wallet = await inteliFactory.methods.getWallet(ra).call({ from: accounts[0] })
+        return wallet
     }
 
     async createStudent(ra) {
-        try {
-            const accounts = await web3.eth.getAccounts()
+        const accounts = await web3.eth.getAccounts()
 
-            await inteliFactory.methods.createStudent(ra).send({
-                from: accounts[0],
-            })
-
-            const success = {
-                type: "success",
-                message: "Aluno criado com sucesso"
-            }
-            return success
-        } catch (err) {
-            const error = {
-                type: "error",
-                message: "Solicitação não autorizada! Tente novamente mais tarde"
-            }
-            return error
-        }
+        await inteliFactory.methods.createStudent(ra).send({
+            from: accounts[0],
+        })
     }
 
     async removeStudent(ra) {
@@ -70,14 +44,14 @@ class Student {
             })
 
             const success = {
-                type: "success",
-                message: "Aluno removido com sucesso"
+                type: 'success',
+                message: 'Aluno removido com sucesso',
             }
             return success
         } catch (err) {
             const error = {
-                type: "error",
-                message: "Solicitação não autorizada! Tente novamente mais tarde"
+                type: 'error',
+                message: 'Solicitação não autorizada! Tente novamente mais tarde',
             }
             return error
         }
@@ -110,9 +84,25 @@ class Student {
         })
     }
 
-    async accesses(ra) {}
+    async accesses(ra, date) {
+        const wallet = await inteliFactory.methods.getWallet(ra).call({
+            from: accounts[0],
+        })
+        const times = await person.methods.getCheckIn(wallet, date).call({
+            from: accounts[0],
+        })
+        return times
+    }
 
-    async exits(ra) {}
+    async exits(ra, date) {
+        const wallet = await inteliFactory.methods.getWallet(ra).call({
+            from: accounts[0],
+        })
+        const times = await person.methods.getCheckOut(wallet, date).call({
+            from: accounts[0],
+        })
+        return times
+    }
 
     async AllAccesses() {
         const wallets = await accessCampus.methods.getStudentEntries().call({
@@ -144,5 +134,5 @@ class Student {
 }
 
 module.exports = {
-    Student
+    Student,
 }
