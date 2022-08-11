@@ -13,6 +13,6 @@ module.exports = {
   paths: {
     sources: "./ethereum/contracts",
     artifacts: "./ethereum/artifacts",
-    // cache: "./ethereum/artifacts/cache"
+    cache: "./ethereum/artifacts/cache"
   }
 };
