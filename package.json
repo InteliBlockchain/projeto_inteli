@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "test": "mocha"
+    "test": "mocha",
+    "compile": "npx hardhat compile"
   },
   "author": "",
   "license": "ISC",
