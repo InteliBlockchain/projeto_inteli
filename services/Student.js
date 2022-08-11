@@ -4,21 +4,24 @@ const { instance: inteliFactory } = require('../ethereum/factory')
 
 class Student {
     async getStudent(address) {
-        try {
-            const accounts = await web3.eth.getAccounts()
-            const ra = await inteliFactory.methods.getStudent(address).call({ from: accounts[0] })
-            const success = {
-                type: 'success',
-                message: ra,
-            }
-            return success
-        } catch (err) {
-            const error = {
-                type: 'error',
-                message: 'Solicitação não autorizada! Tente novamente mais tarde',
-            }
-            return error
-        }
+        // try {
+        //     const accounts = await web3.eth.getAccounts()
+        //     const ra = await inteliFactory.methods.getStudent(address).call({ from: accounts[0] })
+        //     const success = {
+        //         type: 'success',
+        //         message: ra,
+        //     }
+        //     return success
+        // } catch (err) {
+        //     const error = {
+        //         type: 'error',
+        //         message: 'Solicitação não autorizada! Tente novamente mais tarde',
+        //     }
+        //     return error
+        // }
+        const accounts = await web3.eth.getAccounts()
+        const ra = await inteliFactory.methods.getStudent(address).call({ from: accounts[0] })
+        return ra
     }
 
     async getWallet(ra) {
@@ -29,33 +32,36 @@ class Student {
 
     async createStudent(ra) {
         const accounts = await web3.eth.getAccounts()
-
         await inteliFactory.methods.createStudent(ra).send({
             from: accounts[0],
         })
     }
 
     async removeStudent(ra) {
-        try {
-            const accounts = await web3.eth.getAccounts()
+        // try {
+        //     const accounts = await web3.eth.getAccounts()
 
-            await inteliFactory.methods.removeStudent(ra).send({
-                from: accounts[0],
-            })
+        //     await inteliFactory.methods.removeStudent(ra).send({
+        //         from: accounts[0],
+        //     })
 
-            const success = {
-                type: 'success',
-                message: 'Aluno removido com sucesso',
-            }
-            return success
-        } catch (err) {
-            const error = {
-                type: 'error',
-                message: 'Solicitação não autorizada! Tente novamente mais tarde',
-            }
-            return error
-        }
+        //     const success = {
+        //         type: 'success',
+        //         message: 'Aluno removido com sucesso',
+        //     }
+        //     return success
+        // } catch (err) {
+        //     const error = {
+        //         type: 'error',
+        //         message: 'Solicitação não autorizada! Tente novamente mais tarde',
+        //     }
+        //     return error
+        // }
         // Lembrar de executar o autodestruct do contrato person (branch do lemos)
+        const accounts = await web3.eth.getAccounts()
+        await inteliFactory.methods.removeStudent(ra).send({
+            from: accounts[0],
+        })
     }
 
     async checkIn(ra, time, date) {

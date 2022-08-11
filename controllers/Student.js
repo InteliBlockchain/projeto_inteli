@@ -2,21 +2,21 @@ const { validationResult } = require('express-validator')
 const studentService = require('../services/Student')
 require('express-async-errors')
 
-// const studentExists = async (req, res) => {
-//     //Pega as infos da requisição
-//     const { wallet } = req.params
+const studentExists = async (req, res) => {
+    //Pega as infos da requisição
+    const { wallet } = req.params
 
-//     //Instancia a classe criando uma vaga
-//     const Student = new studentService.Student()
+    //Instancia a classe criando uma vaga
+    const Student = new studentService.Student()
 
-//     try {
-//         //Tratamento das respostas do método da classe
-//         const wallet = await Student.getStudent(wallet)
-//         res.send(wallet)
-//     } catch (err) {
-//         res.status(500).send()
-//     }
-// }
+    try {
+        //Tratamento das respostas do método da classe
+        const ra = await Student.getStudent(wallet)
+        res.send(ra)
+    } catch (err) {
+        res.status(500).send()
+    }
+}
 
 const createStudent = async (req, res) => {
     //Pega as infos da requisição
@@ -38,7 +38,7 @@ const createStudent = async (req, res) => {
             //Tratamento das respostas do método da classe
             await Student.createStudent(ra)
 
-            res.send()
+            res.send("Usuário criado com sucesso")
         } catch (err) {
             
             res.status(400).send('Solicitação não autorizada! Tente novamente mais tarde')
@@ -70,17 +70,13 @@ const deleteStudent = (req, res) => {
     const Student = new studentService.Student()
 
     //Tratamento das respostas do método da classe
-    Student.deleteStudent(ra).then((resul) => {
-        if (resul.type === 'error') {
-            res.status(500).json({
-                error: resul.message,
-            })
-        } else {
-            res.status(200).json({
-                message: resul.message,
-            })
-        }
-    })
+    try {
+        //Tratamento das respostas do método da classe
+        await Student.removeStudent(ra)
+        res.send("Usuário removido com sucesso")
+    } catch (err) {
+        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+    }
 
     return Student
 }
@@ -98,23 +94,16 @@ const CheckIn = (req, res) => {
         })
         return
     } else {
-        //Instancia a classe criando uma vaga
-        const Student = new studentService.Student()
-
-        //Tratamento das respostas do método da classe
-        Student.checkIn(ra).then((resul) => {
-            if (resul.type === 'error') {
-                res.status(500).json({
-                    error: resul.message,
-                })
-            } else {
-                res.status(200).json({
-                    message: resul.message,
-                })
-            }
-        })
-
-        return Student
+        try {
+            //Instancia a classe criando uma vaga
+            const Student = new studentService.Student();
+            
+            //Tratamento das respostas do método da classe
+            await Student.checkIn(ra);
+            res.send('CheckIn feito com sucesso')
+        } catch (err) {
+            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        }
     }
 }
 
@@ -131,23 +120,16 @@ const CheckOut = (req, res) => {
         })
         return
     } else {
-        //Instancia a classe criando uma vaga
-        const Student = new studentService.Student()
+        try {
+            //Instancia a classe criando uma vaga
+            const Student = new studentService.Student();
 
-        //Tratamento das respostas do método da classe
-        Student.checkOut(ra).then((resul) => {
-            if (resul.type === 'error') {
-                res.status(500).json({
-                    error: resul.message,
-                })
-            } else {
-                res.status(200).json({
-                    message: resul.message,
-                })
-            }
-        })
-
-        return Student
+            //Tratamento das respostas do método da classe
+            await Student.checkOut(ra);
+            res.send('CheckOut feito com sucesso')
+        } catch(err) {
+            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        }
     }
 }
 
@@ -164,21 +146,17 @@ const Accesses = (req, res) => {
         })
         return
     } else {
-        //Instancia a classe criando uma vaga
-        const Student = new studentService.Student()
+        try {
+            //Instancia a classe criando uma vaga
+            const Student = new studentService.Student();
 
-        //Tratamento das respostas do método da classe
-        Student.accesses(ra, date).then((resul) => {
-            if (resul.type === 'error') {
-                res.status(500).json({
-                    error: resul.message,
-                })
-            } else {
-                res.status(200).json({
-                    message: resul.message,
-                })
-            }
-        })
+            //Tratamento das respostas do método da classe
+            const times = await Student.accesses(ra, date);
+
+            res.send(times)
+        } catch(err) {
+            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        }
 
         return Student
     }
@@ -197,23 +175,17 @@ const Exits = (req, res) => {
         })
         return
     } else {
-        //Instancia a classe criando uma vaga
-        const Student = new studentService.Student()
+        try {
+            //Instancia a classe criando uma vaga
+            const Student = new studentService.Student()
 
-        //Tratamento das respostas do método da classe
-        Student.accesses(ra, date).then((resul) => {
-            if (resul.type === 'error') {
-                res.status(500).json({
-                    error: resul.message,
-                })
-            } else {
-                res.status(200).json({
-                    message: resul.message,
-                })
-            }
-        })
+            //Tratamento das respostas do método da classe
+            const times = await Student.accesses(ra, date);
 
-        return Student
+            res.send(times);
+        } catch(err) {
+            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        }
     }
 }
 
@@ -224,20 +196,12 @@ const AllAccesses = (req, res) => {
     //Instancia a classe criando uma vaga
     const Student = new studentService.Student()
 
-    //Tratamento das respostas do método da classe
-    Student.allAccesses(date).then((resul) => {
-        if (resul.type === 'error') {
-            res.status(500).json({
-                error: resul.message,
-            })
-        } else {
-            res.status(200).json({
-                message: resul.message,
-            })
-        }
-    })
-
-    return Student
+    try {
+        const ras = await Student.allAccesses(date);
+        res.send(ras)
+    } catch(err) {
+        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+    }
 }
 
 const AllExits = (req, res) => {
@@ -247,20 +211,12 @@ const AllExits = (req, res) => {
     //Instancia a classe criando uma vaga
     const Student = new studentService.Student()
 
-    //Tratamento das respostas do método da classe
-    Student.allExits(date).then((resul) => {
-        if (resul.type === 'error') {
-            res.status(500).json({
-                error: resul.message,
-            })
-        } else {
-            res.status(200).json({
-                message: resul.message,
-            })
-        }
-    })
-
-    return Student
+    try {
+        const ras = await Student.allExits(date);
+        res.send(ras)
+    } catch(err) {
+        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+    }
 }
 
 //Exporta as funções do controller para o ROUTER
