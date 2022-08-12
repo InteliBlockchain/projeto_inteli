@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
+
 /*
 AccessCampus contract: consolidation of Person IDs checking in *OR* out in a given day
     . state variables
@@ -19,7 +20,7 @@ contract AccessCampus {
     mapping(string => Access[]) checkIns;
     mapping(string => Access[]) checkOuts;
 
-    constructor () {
+    constructor() {
         owner = msg.sender;
     }
 

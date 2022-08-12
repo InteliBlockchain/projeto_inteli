@@ -2,9 +2,9 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 const { web3 } = require('./web3')
 //compiled smart contracts
-const compiledInteliFactory = require('./artifacts/ethereum/contracts/InteliFactory.sol/InteliFactory.json')
-const compiledAccessCampus = require('./artifacts/ethereum/contracts/AccessCampus.sol/AccessCampus.json')
-const compiledLectureFactory = require('./artifacts/ethereum/contracts/LectureFactory.sol/LectureFactory.json')
+const compiledInteliFactory = require('../artifacts/ethereum/contracts/InteliFactory.sol/InteliFactory.json')
+const compiledAccessCampus = require('../artifacts/ethereum/contracts/AccessCampus.sol/AccessCampus.json')
+const compiledLectureFactory = require('../artifacts/ethereum/contracts/LectureFactory.sol/LectureFactory.json')
 
 //setup rinkeby account
 const provider = new HDWalletProvider(
