@@ -2,6 +2,7 @@
 pragma solidity ^0.8.15;
 
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+
 /*
 Person contract: manage person profile and track activities
     . state variables
@@ -61,10 +62,12 @@ contract Person is ERC1155Holder {
         address _activityAddress
     ) public {
         require(msg.sender == owner);
-        activities[_activityType].push(activitiesStruct({
-            name: _activityName,
-            activityAddress: _activityAddress
-        }));
+        activities[_activityType].push(
+            activitiesStruct({
+                name: _activityName,
+                activityAddress: _activityAddress
+            })
+        );
     }
 
     function getActivities(string memory _activityType)

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "./Person.sol";
+
 /*
 InteliFactory contract: master contract of the project. handle deployment of other
 contracts and consolidate data
@@ -23,9 +24,9 @@ contract InteliFactory {
 
     function createStudent(string memory _id) public {
         require(owner == msg.sender && students[_id] == address(0));
-            Person person = new Person(owner);
-            students[_id] = address(person);
-            wallets[address(person)] = _id;
+        Person person = new Person(owner);
+        students[_id] = address(person);
+        wallets[address(person)] = _id;
     }
 
     function getWallet(string memory _id) public view returns (address) {
