@@ -9,13 +9,13 @@ const compiledInteliFactory = require("../ethereum/artifacts/ethereum/contracts/
 
 //reusable variables
 let accounts;
-let factory;
+let inteliFactory;
 
 //test setup
 beforeEach(async () => {
   accounts = await web3.eth.getAccounts();
 
-  factory = await new web3.eth.Contract(compiledInteliFactory.abi)
+  inteliFactory = await new web3.eth.Contract(compiledInteliFactory.abi)
     .deploy({ data: compiledInteliFactory.bytecode })
     .send({ from: accounts[0], gas: "2500000" });
 
@@ -36,10 +36,17 @@ beforeEach(async () => {
 //test factory functionalities
 describe("factory tests", async () => {
   it("deploys factory contract", () => {
-    assert.ok(factory.options.address);
+    assert.ok(inteliFactory.options.address);
   });
 
-  // it("sets owner as msg.sender", async () => {
-  //   assert(await factory.methods.getDeployedContracts().call());
-  // });
+  it("sets owner properly", async () => {
+    let owner = await inteliFactory.methods.owner().call();
+    assert.equal(accounts[0], owner);
+  });
+
+  it("creates a student", async () => {
+    await inteliFactory.methods
+      .createStudent("A2022.1A.0XXX")
+      .send({ from: accounts[0], gas: "2500000" });
+  });
 });

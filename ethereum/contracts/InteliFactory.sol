@@ -12,9 +12,8 @@ contracts and consolidate data
     . methods: create, retrieve and remove Persons
 */
 
-// TODO: separar contratos em arquivos
 contract InteliFactory {
-    address owner;
+    address public owner;
     mapping(string => address) students;
     mapping(address => string) wallets;
 
