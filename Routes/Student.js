@@ -87,5 +87,21 @@ router.get(
   studentController.AllExits
 );
 
+router.post(
+  "/transferMoney",
+  [body("raOrigem", "RA de Origem é necessário").exists({ checkFalsy: true })],
+  [body("quantity", "Data é necessário").exists({ checkFalsy: true })],
+  [body("raDestino", "RA de destino é necessário").exists({ checkFalsy: true })],
+  studentAuth.unsureAuthenticated,
+  studentController.transferMoney
+);
+
+router.post(
+  "/balance",
+  [body("ra", "RA é necessário").exists({ checkFalsy: true })],
+  studentAuth.unsureAuthenticated,
+  studentController.Balance
+);
+
 //Exporta o ROUTER
 module.exports = router;

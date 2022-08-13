@@ -137,6 +137,14 @@ class Student {
         }
         return ras
     }
+
+    async balance(ra) {
+        //Código aqui
+    }
+
+    async transferMoney(raOrigem, quantity, raDestino) {
+        //Código aqui
+    }
 }
 
 module.exports = {
