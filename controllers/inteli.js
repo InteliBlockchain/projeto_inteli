@@ -2,14 +2,13 @@ const { validationResult } = require('express-validator')
 const inteliService = require('../services/inteli.js')
 require('express-async-errors')
 
+const Inteli = new inteliService.Inteli()
+
 const Balance = (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.params
 
     try {
-        //Instancia a classe criando uma vaga
-        const Inteli = new inteliService.Inteli()
-
         //Tratamento das respostas do método da classe
         const balance = await Inteli.balance(ra);
 
@@ -34,9 +33,6 @@ const rewardStudent = (req, res) => {
         return
     } else {
         try {
-            //Instancia a classe criando uma vaga
-            const Inteli = new inteliService.Inteli()
-
             //Tratamento das respostas do método da classe
             await Inteli.transferMoney(quantity, raStudent);
 

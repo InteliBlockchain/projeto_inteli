@@ -2,12 +2,11 @@ const { validationResult } = require('express-validator')
 const studentService = require('../services/Student')
 require('express-async-errors')
 
+const Student = new studentService.Student()
+
 const studentExists = async (req, res) => {
     //Pega as infos da requisição
     const { wallet } = req.params
-
-    //Instancia a classe criando uma vaga
-    const Student = new studentService.Student()
 
     try {
         //Tratamento das respostas do método da classe
@@ -32,9 +31,6 @@ const createStudent = async (req, res) => {
         return
     } else {
         try {
-            //Instancia a classe criando uma vaga
-            const Student = new studentService.Student()
-
             //Tratamento das respostas do método da classe
             await Student.createStudent(ra)
 
@@ -50,9 +46,6 @@ const getWallet = (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.param
 
-    //Instancia a classe criando uma vaga
-    const Student = new studentService.Student()
-
     try {
         //Tratamento das respostas do método da classe
         const wallet = await Student.getWallet(ra)
@@ -65,9 +58,6 @@ const getWallet = (req, res) => {
 const deleteStudent = (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.param
-
-    //Instancia a classe criando uma vaga
-    const Student = new studentService.Student()
 
     //Tratamento das respostas do método da classe
     try {
@@ -95,9 +85,6 @@ const CheckIn = (req, res) => {
         return
     } else {
         try {
-            //Instancia a classe criando uma vaga
-            const Student = new studentService.Student();
-            
             //Tratamento das respostas do método da classe
             await Student.checkIn(ra);
             res.send('CheckIn feito com sucesso')
@@ -121,9 +108,6 @@ const CheckOut = (req, res) => {
         return
     } else {
         try {
-            //Instancia a classe criando uma vaga
-            const Student = new studentService.Student();
-
             //Tratamento das respostas do método da classe
             await Student.checkOut(ra);
             res.send('CheckOut feito com sucesso')
@@ -147,9 +131,6 @@ const Accesses = (req, res) => {
         return
     } else {
         try {
-            //Instancia a classe criando uma vaga
-            const Student = new studentService.Student();
-
             //Tratamento das respostas do método da classe
             const times = await Student.accesses(ra, date);
 
@@ -176,9 +157,6 @@ const Exits = (req, res) => {
         return
     } else {
         try {
-            //Instancia a classe criando uma vaga
-            const Student = new studentService.Student()
-
             //Tratamento das respostas do método da classe
             const times = await Student.accesses(ra, date);
 
@@ -193,9 +171,6 @@ const AllAccesses = (req, res) => {
     //Pega as infos da requisição
     const { date } = req.params
 
-    //Instancia a classe criando uma vaga
-    const Student = new studentService.Student()
-
     try {
         const ras = await Student.allAccesses(date);
         res.send(ras)
@@ -207,9 +182,6 @@ const AllAccesses = (req, res) => {
 const AllExits = (req, res) => {
     //Pega as infos da requisição
     const { date } = req.params
-
-    //Instancia a classe criando uma vaga
-    const Student = new studentService.Student()
 
     try {
         const ras = await Student.allExits(date);
@@ -233,9 +205,6 @@ const Balance = (req, res) => {
         return
     } else {
         try {
-            //Instancia a classe criando uma vaga
-            const Student = new studentService.Student()
-
             //Tratamento das respostas do método da classe
             const balance = await Student.balance(ra, date);
 
@@ -260,9 +229,6 @@ const transferMoney = (req, res) => {
         return
     } else {
         try {
-            //Instancia a classe criando uma vaga
-            const Student = new studentService.Student()
-
             //Tratamento das respostas do método da classe
             await Student.transferMoney(raOrigem, quantity, raDestino);
 

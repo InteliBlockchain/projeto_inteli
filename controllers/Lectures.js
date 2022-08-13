@@ -2,6 +2,8 @@ const { validationResult } = require('express-validator')
 const lectureService = require('../services/Lecture')
 require('express-async-errors')
 
+const Lecture = new lectureService.Student()
+
 const createLecture = async (req, res) => {
     //Pega as infos da requisição
     const { lectureName, ras } = req.body
@@ -15,9 +17,6 @@ const createLecture = async (req, res) => {
         })
         return
     } else {
-        //Instancia a classe criando uma vaga
-        const Lecture = new lectureService.Student()
-
         try {
             //Tratamento das respostas do método da classe
             await Lecture.createLecture(lectureName, ras);
@@ -30,11 +29,7 @@ const createLecture = async (req, res) => {
 const getLecturesStudent = async (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.param
-
     try {
-        //Instancia a classe criando uma vaga
-        const Lecture = new lectureService.Student();
-
         //Tratamento das respostas do método da classe
         const lectures = await Lecture.getLecturesStudent(ra);
         res.send(lectures)
@@ -43,9 +38,6 @@ const getLecturesStudent = async (req, res) => {
     }
 }
 const getLectures = (req, res) => {
-    //Instancia a classe criando uma vaga
-    const Lecture = new studentService.Student()
-
     try {
         //Tratamento das respostas do método da classe
         const lectures = await Lecture.getLectures()
