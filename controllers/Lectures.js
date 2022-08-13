@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator')
-const lectureService = require('../services/lecture')
+const lectureService = require('../services/Lecture')
 require('express-async-errors')
 
 const Lecture = new lectureService.Student()
