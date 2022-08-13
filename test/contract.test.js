@@ -41,9 +41,21 @@ describe("factory tests", async () => {
     assert.equal(accounts[0], owner);
   });
 
-  it('creates a student', async () => {
-      await inteliFactory.methods.createStudent('A2022.1A.0XXX').send({ from: accounts[0], gas: '2500000' })
-  })
+  it("creates a student", async () => {
+    assert(
+      await inteliFactory.methods
+        .createStudent("A2022.1A.0XXX")
+        .send({ from: accounts[0], gas: "2500000" })
+    );
+  });
+
+  // it("denies creation of student by invalid sender", async () => {
+  //   assert.throws(
+  //     await inteliFactory.methods
+  //       .createStudent("A2022.1A.0XXX")
+  //       .send({ from: accounts[1], gas: "2500000" })
+  //   );
+  // });
 });
 
 //test lectureFactory
