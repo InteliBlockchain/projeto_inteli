@@ -39,7 +39,7 @@ describe("factory tests", async () => {
     assert.ok(factory.options.address);
   });
 
-  // it("returns list of deployed contracts", async () => {
-  //   assert(await factory.methods.getDeployedContracts().call());
-  // });
+  it("sets owner as msg.sender", async () => {
+    assert(await factory.methods.getDeployedContracts().call());
+  });
 });
