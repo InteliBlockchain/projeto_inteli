@@ -16,30 +16,54 @@ contract InteliFactory {
     address public owner;
     mapping(string => address) students;
     mapping(address => string) wallets;
+    address[] arrStudents;
 
     constructor() {
         owner = msg.sender;
     }
 
-    function createStudent(string memory _id) public {
-        require(owner == msg.sender && students[_id] == address(0));
+    modifier isOwner() {
+        require(owner == msg.sender, "Not owner");
+        _;
+    }
+
+    function createStudent(string memory _id) public isOwner {
+        require(students[_id] == address(0), "Student already exists");
         Person person = new Person(owner);
         students[_id] = address(person);
         wallets[address(person)] = _id;
+        arrStudents.push(address(person));
     }
 
-    function getWallet(string memory _id) public view returns (address) {
-        require(owner == msg.sender);
+    function getWallet(string memory _id)
+        public
+        view
+        isOwner
+        returns (address)
+    {
         return students[_id];
     }
 
-    function getStudent(address _id) public view returns (string memory) {
-        require(owner == msg.sender);
+    function getStudent(address _id)
+        public
+        view
+        isOwner
+        returns (string memory)
+    {
         return wallets[_id];
     }
 
-    function removeStudent(string memory _id) public {
-        require(owner == msg.sender && students[_id] != address(0));
+    function getArrStudent() public view isOwner returns (address[] memory) {
+        return arrStudents;
+    }
+
+    function removeStudent(string memory _id) public isOwner {
+        require(students[_id] != address(0), "Student does not exist");
+        for (uint256 i = 0; i >= arrStudents.length; i++) {
+            if (arrStudents[i] == students[_id]) {
+                delete arrStudents[i];
+            }
+        }
         delete wallets[students[_id]];
         delete students[_id];
     }
