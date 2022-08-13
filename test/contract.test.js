@@ -51,13 +51,29 @@ describe("factory tests", async () => {
     );
   });
 
-  // it("denies creation of student by invalid sender", async () => {
-  //   assert.throws(
-  //     await inteliFactory.methods
-  //       .createStudent("A2022.1A.0XXX")
-  //       .send({ from: accounts[1], gas: "2500000" })
-  //   );
-  // });
+  it("deletes a student", async () => {
+    await inteliFactory.methods
+      .createStudent("A2022.1A.0XXX")
+      .send({ from: accounts[0], gas: "2500000" });
+
+    assert(
+      await inteliFactory.methods
+        .removeStudent("A2022.1A.0XXX")
+        .send({ from: accounts[0], gas: "2500000" })
+    );
+  });
+
+  it("deletes a student", async () => {
+    await inteliFactory.methods
+      .createStudent("A2022.1A.0XXX")
+      .send({ from: accounts[0], gas: "2500000" });
+
+    assert(
+      await inteliFactory.methods
+        .removeStudent("A2022.1A.0XXX")
+        .send({ from: accounts[0], gas: "2500000" })
+    );
+  });
 });
 
 //test lectureFactory
