@@ -219,6 +219,60 @@ const AllExits = (req, res) => {
     }
 }
 
+const Balance = (req, res) => {
+    //Pega as infos da requisição
+    const { ra } = req.body
+
+    //Valida se algum paremetro é inválido
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        res.status(400).json({
+            error: errors.errors[0].msg,
+        })
+        return
+    } else {
+        try {
+            //Instancia a classe criando uma vaga
+            const Student = new studentService.Student()
+
+            //Tratamento das respostas do método da classe
+            const balance = await Student.balance(ra, date);
+
+            res.send(balance);
+        } catch(err) {
+            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        }
+    }
+}
+
+const transferMoney = (req, res) => {
+    //Pega as infos da requisição
+    const { raOrigem, quantity, raDestino } = req.body
+
+    //Valida se algum paremetro é inválido
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        res.status(400).json({
+            error: errors.errors[0].msg,
+        })
+        return
+    } else {
+        try {
+            //Instancia a classe criando uma vaga
+            const Student = new studentService.Student()
+
+            //Tratamento das respostas do método da classe
+            await Student.transferMoney(raOrigem, quantity, raDestino);
+
+            res.send('Dinheiro Transferido com sucesso');
+        } catch(err) {
+            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        }
+    }
+}
+
 //Exporta as funções do controller para o ROUTER
 module.exports = {
     studentExists,
@@ -231,4 +285,6 @@ module.exports = {
     Exits,
     AllAccesses,
     AllExits,
+    Balance,
+    transferMoney
 }
