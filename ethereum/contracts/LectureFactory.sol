@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./Lecture.sol";
 
 contract LectureFactory {
-    address owner;
+    address public owner;
 
     struct LectureStruct {
         string name;
