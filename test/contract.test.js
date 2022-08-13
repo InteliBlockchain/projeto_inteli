@@ -12,6 +12,8 @@ const compiledAccessCampus = require("../ethereum/artifacts/ethereum/contracts/A
 //reusable variables
 let accounts;
 let inteliFactory;
+let lectureFactory;
+let accessCampus;
 
 //test setup
 beforeEach(async () => {
@@ -65,11 +67,13 @@ describe('lectureFactory tests', async () => {
     })
     it('sets owner properly', () => {
       let owner = await lectureFactory.methods.owner().call()
-        assert.equal(accounts[0], owner)
+      assert.equal(accounts[0], owner)
     })
     it('creates a new lecture', () => {
+      assert(await lectureFactory.methods.createLecture('Lecture Name', [accounts[0], ""]).send({ from: accounts[0], gas: '25000000' }));
     })
     it('see all lectures', async () => {
-      let lectures = await lectureFactory.methods.lectures().call()
+      let lectures = await lectureFactory.methods.viewLectures().call()
+      assert.equal(lectures.length, 1)
     })
 })
