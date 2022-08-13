@@ -1,6 +1,7 @@
 const { web3 } = require('../ethereum/web3')
 //compiled smart contract
 const { instance: inteliFactory } = require('../ethereum/factory')
+const { instance: person} = require('../ethereum/contractInteractions/person')
 
 class Student {
     async getStudent(address) {
@@ -139,11 +140,24 @@ class Student {
     }
 
     async balance(ra) {
-        //Código aqui
+        const wallet = await inteliFactory.methods.getWallet(ra).call({
+            from: accounts[0],
+        })
+        const balance = await person(wallet).methods.getBalance().call({
+            from: accounts[0],
+        })
+    
+        return balance
     }
 
     async transferMoney(raOrigem, quantity, raDestino) {
-        //Código aqui
+        const walletOrigem = await inteliFactory.methods.getWallet(raOrigem).call({
+            from: accounts[0],
+        })
+
+        const transfer = await person(walletOrigem).methods.transferMoney(walletDestino, quantity).call({
+            from: accounts[0],
+        })
     }
 }
 
