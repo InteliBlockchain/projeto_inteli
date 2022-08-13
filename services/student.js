@@ -155,6 +155,10 @@ class Student {
             from: accounts[0],
         })
 
+        const walletDestino = await inteliFactory.methods.getWallet(raDestino).call({
+            from: accounts[0],
+        })
+
         const transfer = await person(walletOrigem).methods.transferMoney(walletDestino, quantity).call({
             from: accounts[0],
         })
