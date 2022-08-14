@@ -104,3 +104,8 @@ dist
 
 # DS_Store
 */.DS_Store
+
+# Tmp
+tmp/
+
+.env

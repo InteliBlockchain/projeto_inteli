@@ -1,6 +1,6 @@
-const { web3 } = require('../ethereum/web3')
+const { web3 } = require('../ethereum/utils/web3')
 //compiled smart contract
-const { instance: inteliFactory } = require('../ethereum/factory')
+const { instance: inteliFactory } = require('../ethereum/contractsInteractions/inteliFactory')
 
 class Student {
     async getStudent(address) {

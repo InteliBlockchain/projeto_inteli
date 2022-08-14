@@ -23,9 +23,11 @@ app.use(
 
 const PORT = process.env.PORT || 3001;
 
-const StudentRouter = require("./Routes/Student");
+const StudentRouter = require("./routes/student");
+app.use("/student", StudentRouter);
 
-app.use("/Student", StudentRouter);
+const lectureRouter = require("./routes/lecture");
+app.use("/lecture", lectureRouter);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta http://localhost:${PORT}`);

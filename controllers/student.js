@@ -34,28 +34,28 @@ const createStudent = async (req, res) => {
             //Tratamento das respostas do método da classe
             await Student.createStudent(ra)
 
-            res.send("Usuário criado com sucesso")
+            res.send('Usuário criado com sucesso')
         } catch (err) {
-            
             res.status(400).send('Solicitação não autorizada! Tente novamente mais tarde')
         }
     }
 }
 
-const getWallet = (req, res) => {
+const getWallet = async (req, res) => {
     //Pega as infos da requisição
-    const { ra } = req.param
+    const { ra } = req.body
 
     try {
         //Tratamento das respostas do método da classe
         const wallet = await Student.getWallet(ra)
         res.send(wallet)
     } catch (err) {
+        console.log(err)
         res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
     }
 }
 
-const deleteStudent = (req, res) => {
+const deleteStudent = async (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.param
 
@@ -63,7 +63,7 @@ const deleteStudent = (req, res) => {
     try {
         //Tratamento das respostas do método da classe
         await Student.removeStudent(ra)
-        res.send("Usuário removido com sucesso")
+        res.send('Usuário removido com sucesso')
     } catch (err) {
         res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
     }
@@ -71,7 +71,7 @@ const deleteStudent = (req, res) => {
     return Student
 }
 
-const CheckIn = (req, res) => {
+const CheckIn = async (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.body
 
@@ -86,7 +86,7 @@ const CheckIn = (req, res) => {
     } else {
         try {
             //Tratamento das respostas do método da classe
-            await Student.checkIn(ra);
+            await Student.checkIn(ra)
             res.send('CheckIn feito com sucesso')
         } catch (err) {
             res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
@@ -94,7 +94,7 @@ const CheckIn = (req, res) => {
     }
 }
 
-const CheckOut = (req, res) => {
+const CheckOut = async (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.body
 
@@ -109,15 +109,15 @@ const CheckOut = (req, res) => {
     } else {
         try {
             //Tratamento das respostas do método da classe
-            await Student.checkOut(ra);
+            await Student.checkOut(ra)
             res.send('CheckOut feito com sucesso')
-        } catch(err) {
+        } catch (err) {
             res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
         }
     }
 }
 
-const Accesses = (req, res) => {
+const Accesses = async (req, res) => {
     //Pega as infos da requisição
     const { ra, date } = req.body
 
@@ -132,10 +132,10 @@ const Accesses = (req, res) => {
     } else {
         try {
             //Tratamento das respostas do método da classe
-            const times = await Student.accesses(ra, date);
+            const times = await Student.accesses(ra, date)
 
             res.send(times)
-        } catch(err) {
+        } catch (err) {
             res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
         }
 
@@ -143,7 +143,7 @@ const Accesses = (req, res) => {
     }
 }
 
-const Exits = (req, res) => {
+const Exits = async (req, res) => {
     //Pega as infos da requisição
     const { ra, date } = req.body
 
@@ -158,40 +158,40 @@ const Exits = (req, res) => {
     } else {
         try {
             //Tratamento das respostas do método da classe
-            const times = await Student.accesses(ra, date);
+            const times = await Student.accesses(ra, date)
 
-            res.send(times);
-        } catch(err) {
+            res.send(times)
+        } catch (err) {
             res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
         }
     }
 }
 
-const AllAccesses = (req, res) => {
+const AllAccesses = async (req, res) => {
     //Pega as infos da requisição
     const { date } = req.params
 
     try {
-        const ras = await Student.allAccesses(date);
+        const ras = await Student.allAccesses(date)
         res.send(ras)
-    } catch(err) {
+    } catch (err) {
         res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
     }
 }
 
-const AllExits = (req, res) => {
+const AllExits = async (req, res) => {
     //Pega as infos da requisição
     const { date } = req.params
 
     try {
-        const ras = await Student.allExits(date);
+        const ras = await Student.allExits(date)
         res.send(ras)
-    } catch(err) {
+    } catch (err) {
         res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
     }
 }
 
-const Balance = (req, res) => {
+const Balance = async (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.body
 
@@ -206,16 +206,16 @@ const Balance = (req, res) => {
     } else {
         try {
             //Tratamento das respostas do método da classe
-            const balance = await Student.balance(ra, date);
+            const balance = await Student.balance(ra, date)
 
-            res.send(balance);
-        } catch(err) {
+            res.send(balance)
+        } catch (err) {
             res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
         }
     }
 }
 
-const transferMoney = (req, res) => {
+const transferMoney = async (req, res) => {
     //Pega as infos da requisição
     const { raOrigem, quantity, raDestino } = req.body
 
@@ -230,10 +230,10 @@ const transferMoney = (req, res) => {
     } else {
         try {
             //Tratamento das respostas do método da classe
-            await Student.transferMoney(raOrigem, quantity, raDestino);
+            await Student.transferMoney(raOrigem, quantity, raDestino)
 
-            res.send('Dinheiro Transferido com sucesso');
-        } catch(err) {
+            res.send('Dinheiro Transferido com sucesso')
+        } catch (err) {
             res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
         }
     }
@@ -252,5 +252,5 @@ module.exports = {
     AllAccesses,
     AllExits,
     Balance,
-    transferMoney
+    transferMoney,
 }
