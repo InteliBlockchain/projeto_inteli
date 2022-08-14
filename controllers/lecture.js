@@ -6,7 +6,7 @@ const Lecture = new lectureService.Student()
 
 const createLecture = async (req, res) => {
     //Pega as infos da requisição
-    const { name, ras, time,  } = req.body
+    const { name, ras, time } = req.body
     //Valida se algum paremetro é inválido
     const errors = validationResult(req)
 
@@ -33,8 +33,7 @@ const getLecturesStudent = async (req, res) => {
         const lectures = await Lecture.getLecturesStudent(ra);
         res.send(lectures)
     } catch (err) {
-        console.log(err)
-        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        res.status(500).send()
     }
 }
 
@@ -44,7 +43,7 @@ const getLectures = async (req, res) => {
         const lectures = await Lecture.getLectures()
         res.send(lectures)
     } catch (err) {
-        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        res.status(500).send()
     }
 }
 

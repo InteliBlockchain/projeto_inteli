@@ -69,11 +69,8 @@ class Student {
         // Get da url e executa função createLecture do contrato LectureFactory
         const newLectureAddress = JSON.parse(
             JSON.stringify(
-                (
-                    await lectureFactory.methods
-                        .createLecture(wallets, parsedResult.url)
-                        .send({ from: accounts[0] })
-                ).events.NewLecture.returnValues
+                (await lectureFactory.methods.createLecture(wallets, parsedResult.url).send({ from: accounts[0] }))
+                    .events.NewLecture.returnValues
             )
         )[0]
 
@@ -101,20 +98,33 @@ class Student {
         })
 
         const lecturesMetadata = []
-    
+
         for (let i = 0; i < lecturesAdresses.length; i++) {
-            const ipfsLink = await lecture(lecturesAdresses[i]).methods.uri(0).call({from: accounts[0]})
+            const ipfsLink = await lecture(lecturesAdresses[i]).methods.uri(0).call({ from: accounts[0] })
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
             const response = await fetch(formatedIpfsLink)
-            const metadata = await  response.json()
+            const metadata = await response.json()
             lecturesMetadata.push(metadata)
         }
-      
+
         return lecturesMetadata
     }
 
     async getLectures() {
-        //
+        const accounts = await web3.eth.getAccounts()
+        const lectures = await lectureFactory.methods.viewLectures().call({ from: accounts[0] })
+
+        const lecturesMetadata = []
+
+        for (let i = 0; i < lectures.length; i++) {
+            const ipfsLink = await lecture(lectures[i]).methods.uri(0).call({ from: accounts[0] })
+            const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
+            const response = await fetch(formatedIpfsLink)
+            const metadata = await response.json()
+            lecturesMetadata.push(metadata)
+        }
+
+        return lecturesMetadata
     }
 }
 

@@ -29,9 +29,9 @@ contract InteliFactory {
         wallets[address(person)] = _id;
     }
 
-    function getWallet(string memory _id) public view returns (address) {
+    function getWallet(string memory _ra) public view returns (address) {
         require(owner == msg.sender);
-        return students[_id];
+        return students[_ra];
     }
 
     function getStudent(address _id) public view returns (string memory) {
@@ -39,10 +39,10 @@ contract InteliFactory {
         return wallets[_id];
     }
 
-    function removeStudent(string memory _id) public {
-        require(owner == msg.sender && students[_id] != address(0));
-        delete wallets[students[_id]];
-        delete students[_id];
+    function removeStudent(string memory _ra) public {
+        require(owner == msg.sender && students[_ra] != address(0));
+        delete wallets[students[_ra]];
+        delete students[_ra];
     }
 
     function transferMoney(address payable _id, uint _amount) external payable {
@@ -50,7 +50,7 @@ contract InteliFactory {
         _id.transfer(_amount);
     }
     
-    function getBalance(address _id) public view returns (uint) {
+    function getBalance() public view returns (uint) {
         require(owner == msg.sender);
         return address(this).balance;
     }
