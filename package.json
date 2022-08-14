@@ -7,6 +7,9 @@
     "dev": "nodemon app.js",
     "start": "node app.js",
     "test": "mocha",
+    "iTest": "mocha test/contractInteliFactory.test.js",
+    "lTest": "mocha test/contractLectureFactory.test.js",
+    "aTest": "mocha test/contractAccessCampus.test.js",
     "deploy": "node ethereum/utils/deployContracts.js",
     "compile": "npx hardhat compile"
   },
