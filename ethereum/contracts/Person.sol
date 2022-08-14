@@ -15,8 +15,8 @@ Person contract: manage person profile and track activities
 contract Person is ERC1155Holder {
     address owner;
 
-    mapping(string => string[]) private campusCheckIn;
-    mapping(string => string[]) private campusCheckOut;
+    mapping(string => uint[]) private campusCheckIn;
+    mapping(string => uint[]) private campusCheckOut;
     mapping(string => address[]) public activities;
 
     constructor(address _owner) {
@@ -32,32 +32,32 @@ contract Person is ERC1155Holder {
        _to.transfer(_value);
     }
 
-    function registerCheckIn(string memory _date, string memory _time) public {
+    function registerCheckIn(string memory _date, uint _time) public {
         require(msg.sender == owner);
         campusCheckIn[_date].push(_time);
     }
 
-    function getCheckIn(string memory _id)
+    function getCheckIn(string memory _date)
         public
         view
-        returns (string[] memory)
+        returns (uint[] memory)
     {
         require(msg.sender == owner);
-        return campusCheckIn[_id];
+        return campusCheckIn[_date];
     }
 
-    function registerCheckOut(string memory _date, string memory _time) public {
+    function registerCheckOut(string memory _date, uint _time) public {
         require(msg.sender == owner);
         campusCheckOut[_date].push(_time);
     }
 
-    function getCheckOut(string memory _id)
+    function getCheckOut(string memory _date)
         public
         view
-        returns (string[] memory)
+        returns (uint[] memory)
     {
         require(msg.sender == owner);
-        return campusCheckOut[_id];
+        return campusCheckOut[_date];
     }
 
     function newActivity(string memory _activityType, address _activityAddress)

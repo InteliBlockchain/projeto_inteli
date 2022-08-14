@@ -1,12 +1,25 @@
 const { validationResult } = require('express-validator')
 const studentService = require('../services/student')
-require('express-async-errors')
 
 const Student = new studentService.Student()
 
-const studentExists = async (req, res) => {
+const formatDate = (date) => {
+    let d = new Date(date)
+    let month = (d.getMonth() + 1).toString()
+    let day = d.getDate().toString()
+    let year = d.getFullYear()
+    if (month.length < 2) {
+        month = '0' + month
+    }
+    if (day.length < 2) {
+        day = '0' + day
+    }
+    return [year, month, day].join('-')
+}
+
+const getStudent = async (req, res) => {
     //Pega as infos da requisição
-    const { wallet } = req.params
+    const { wallet } = req.body
 
     try {
         //Tratamento das respostas do método da classe
@@ -29,15 +42,15 @@ const createStudent = async (req, res) => {
             error: errors.errors[0].msg,
         })
         return
-    } else {
-        try {
-            //Tratamento das respostas do método da classe
-            await Student.createStudent(ra)
+    }
 
-            res.send('Usuário criado com sucesso')
-        } catch (err) {
-            res.status(400).send('Solicitação não autorizada! Tente novamente mais tarde')
-        }
+    try {
+        //Tratamento das respostas do método da classe
+        await Student.createStudent(ra)
+
+        res.send('Usuário criado com sucesso')
+    } catch (err) {
+        res.status(400).send('Erro ao criar carteira para o estudante')
     }
 }
 
@@ -51,13 +64,13 @@ const getWallet = async (req, res) => {
         res.send(wallet)
     } catch (err) {
         console.log(err)
-        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        res.status(500).send()
     }
 }
 
 const deleteStudent = async (req, res) => {
     //Pega as infos da requisição
-    const { ra } = req.param
+    const { ra } = req.params
 
     //Tratamento das respostas do método da classe
     try {
@@ -65,15 +78,17 @@ const deleteStudent = async (req, res) => {
         await Student.removeStudent(ra)
         res.send('Usuário removido com sucesso')
     } catch (err) {
-        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        res.status(500).send('Erro ao remover usuário')
     }
 
     return Student
 }
 
-const CheckIn = async (req, res) => {
+const checkIn = async (req, res) => {
     //Pega as infos da requisição
-    const { ra } = req.body
+    const { ra, dateTime } = req.body
+
+    const formatedDate = new Date(dateTime)
 
     //Valida se algum paremetro é inválido
     const errors = validationResult(req)
@@ -83,20 +98,22 @@ const CheckIn = async (req, res) => {
             error: errors.errors[0].msg,
         })
         return
-    } else {
-        try {
-            //Tratamento das respostas do método da classe
-            await Student.checkIn(ra)
-            res.send('CheckIn feito com sucesso')
-        } catch (err) {
-            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
-        }
+    }
+
+    try {
+        await Student.checkIn(ra, formatedDate.getTime(), formatDate(dateTime))
+        res.send('Registro de entrada feito com sucesso')
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(err)
     }
 }
 
-const CheckOut = async (req, res) => {
+const checkOut = async (req, res) => {
     //Pega as infos da requisição
-    const { ra } = req.body
+    const { ra, dateTime } = req.body
+
+    const formatedDate = new Date(dateTime)
 
     //Valida se algum paremetro é inválido
     const errors = validationResult(req)
@@ -106,44 +123,17 @@ const CheckOut = async (req, res) => {
             error: errors.errors[0].msg,
         })
         return
-    } else {
-        try {
-            //Tratamento das respostas do método da classe
-            await Student.checkOut(ra)
-            res.send('CheckOut feito com sucesso')
-        } catch (err) {
-            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
-        }
+    }
+    try {
+        //Tratamento das respostas do método da classe
+        await Student.checkOut(ra, formatedDate.getTime(), formatDate(dateTime))
+        res.send('Registro de saída feito com sucesso')
+    } catch (err) {
+        res.status(500).send()
     }
 }
 
-const Accesses = async (req, res) => {
-    //Pega as infos da requisição
-    const { ra, date } = req.body
-
-    //Valida se algum paremetro é inválido
-    const errors = validationResult(req)
-
-    if (!errors.isEmpty()) {
-        res.status(400).json({
-            error: errors.errors[0].msg,
-        })
-        return
-    } else {
-        try {
-            //Tratamento das respostas do método da classe
-            const times = await Student.accesses(ra, date)
-
-            res.send(times)
-        } catch (err) {
-            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
-        }
-
-        return Student
-    }
-}
-
-const Exits = async (req, res) => {
+const accesses = async (req, res) => {
     //Pega as infos da requisição
     const { ra, date } = req.body
 
@@ -155,19 +145,43 @@ const Exits = async (req, res) => {
             error: errors.errors[0].msg,
         })
         return
-    } else {
-        try {
-            //Tratamento das respostas do método da classe
-            const times = await Student.accesses(ra, date)
+    } 
 
-            res.send(times)
-        } catch (err) {
-            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
-        }
+    try {
+        //Tratamento das respostas do método da classe
+        const times = await Student.accesses(ra, date)
+
+        res.send(times)
+    } catch (err) {
+        res.status(500).send('Erro ao buscar as entradas')
+    }
+
+    return Student
+}
+
+const exits = async (req, res) => {
+    //Pega as infos da requisição
+    const { ra, date } = req.body
+
+    //Valida se algum paremetro é inválido
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+        res.status(400).json({
+            error: errors.errors[0].msg,
+        })
+        return
+    }
+    try {
+        //Tratamento das respostas do método da classe
+        const times = await Student.accesses(ra, date)
+        res.send(times)
+    } catch (err) {
+        res.status(500).send()
     }
 }
 
-const AllAccesses = async (req, res) => {
+const allAccesses = async (req, res) => {
     //Pega as infos da requisição
     const { date } = req.params
 
@@ -175,23 +189,23 @@ const AllAccesses = async (req, res) => {
         const ras = await Student.allAccesses(date)
         res.send(ras)
     } catch (err) {
-        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        res.status(500).send()
     }
 }
 
-const AllExits = async (req, res) => {
+const allExits = async (req, res) => {
     //Pega as infos da requisição
-    const { date } = req.params
+    const { date } = req.query
 
     try {
         const ras = await Student.allExits(date)
         res.send(ras)
     } catch (err) {
-        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        res.status(500).send()
     }
 }
 
-const Balance = async (req, res) => {
+const balance = async (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.body
 
@@ -203,21 +217,20 @@ const Balance = async (req, res) => {
             error: errors.errors[0].msg,
         })
         return
-    } else {
-        try {
-            //Tratamento das respostas do método da classe
-            const balance = await Student.balance(ra, date)
+    }
+    try {
+        //Tratamento das respostas do método da classe
+        const balance = await Student.balance(ra)
+        res.send(balance)
+    } catch (err) {
 
-            res.send(balance)
-        } catch (err) {
-            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
-        }
+        res.status(500).send()
     }
 }
 
 const transferMoney = async (req, res) => {
     //Pega as infos da requisição
-    const { raOrigem, quantity, raDestino } = req.body
+    const { senderWallet, quantity, receiverWallet } = req.body
 
     //Valida se algum paremetro é inválido
     const errors = validationResult(req)
@@ -227,30 +240,30 @@ const transferMoney = async (req, res) => {
             error: errors.errors[0].msg,
         })
         return
-    } else {
-        try {
-            //Tratamento das respostas do método da classe
-            await Student.transferMoney(raOrigem, quantity, raDestino)
+    }
 
-            res.send('Dinheiro Transferido com sucesso')
-        } catch (err) {
-            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
-        }
+    try {
+        //Tratamento das respostas do método da classe
+        await Student.transferMoney(senderWallet, quantity, receiverWallet)
+
+        res.send('Transação realizada com sucesso')
+    } catch (err) {
+        res.status(500).send("Não foi possível concretizar a transação")
     }
 }
 
 //Exporta as funções do controller para o ROUTER
 module.exports = {
-    studentExists,
+    getStudent,
     createStudent,
     getWallet,
     deleteStudent,
-    CheckIn,
-    CheckOut,
-    Accesses,
-    Exits,
-    AllAccesses,
-    AllExits,
-    Balance,
+    checkIn,
+    checkOut,
+    accesses,
+    exits,
+    allAccesses,
+    allExits,
+    balance,
     transferMoney,
 }

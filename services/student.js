@@ -2,24 +2,10 @@ const { web3 } = require('../ethereum/utils/web3')
 //compiled smart contract
 const { instance: inteliFactory } = require('../ethereum/contractsInteractions/inteliFactory')
 const { instance: person } = require('../ethereum/contractsInteractions/person')
+const { instance: accessCampus } = require('../ethereum/contractsInteractions/accessCampus')
 
 class Student {
     async getStudent(address) {
-        // try {
-        //     const accounts = await web3.eth.getAccounts()
-        //     const ra = await inteliFactory.methods.getStudent(address).call({ from: accounts[0] })
-        //     const success = {
-        //         type: 'success',
-        //         message: ra,
-        //     }
-        //     return success
-        // } catch (err) {
-        //     const error = {
-        //         type: 'error',
-        //         message: 'Solicitação não autorizada! Tente novamente mais tarde',
-        //     }
-        //     return error
-        // }
         const accounts = await web3.eth.getAccounts()
         const ra = await inteliFactory.methods.getStudent(address).call({ from: accounts[0] })
         return ra
@@ -39,28 +25,18 @@ class Student {
     }
 
     async removeStudent(ra) {
-        // try {
-        //     const accounts = await web3.eth.getAccounts()
-
-        //     await inteliFactory.methods.removeStudent(ra).send({
-        //         from: accounts[0],
-        //     })
-
-        //     const success = {
-        //         type: 'success',
-        //         message: 'Aluno removido com sucesso',
-        //     }
-        //     return success
-        // } catch (err) {
-        //     const error = {
-        //         type: 'error',
-        //         message: 'Solicitação não autorizada! Tente novamente mais tarde',
-        //     }
-        //     return error
-        // }
         // Lembrar de executar o autodestruct do contrato person (branch do lemos)
+        const walletAddress = await this.getWallet(ra)
+
+        if (walletAddress == '0x0000000000000000000000000000000000000000') {
+            throw new Error ('Estudante não encontrado')
+        }
+
         const accounts = await web3.eth.getAccounts()
         await inteliFactory.methods.removeStudent(ra).send({
+            from: accounts[0],
+        })
+        await person(walletAddress).methods.eraseMe().send({
             from: accounts[0],
         })
     }
@@ -70,10 +46,15 @@ class Student {
         const wallet = await inteliFactory.methods.getWallet(ra).call({
             from: accounts[0],
         })
+
+        if (wallet == '0x0000000000000000000000000000000000000000') {
+            throw new Error ('Estudante não encontrado')
+        }
+
         await accessCampus.methods.registerCheckIn(wallet, time, date).send({
             from: accounts[0],
         })
-        await person.methods.registerCheckIn(date, time).send({
+        await person(wallet).methods.registerCheckIn(date, time).send({
             from: accounts[0],
         })
     }
@@ -83,55 +64,72 @@ class Student {
         const wallet = await inteliFactory.methods.getWallet(ra).call({
             from: accounts[0],
         })
+
+        if (wallet == '0x0000000000000000000000000000000000000000') {
+            throw new Error ('Estudante não encontrado')
+        }
+
         await accessCampus.methods.registerCheckOut(wallet, time, date).send({
             from: accounts[0],
         })
-        await person.methods.registerCheckOut(date, time).send({
+        await person(wallet).methods.registerCheckOut(date, time).send({
             from: accounts[0],
         })
     }
 
     async accesses(ra, date) {
+        const accounts = await web3.eth.getAccounts()
         const wallet = await inteliFactory.methods.getWallet(ra).call({
             from: accounts[0],
         })
-        const times = await person.methods.getCheckIn(wallet, date).call({
+
+        if (wallet == '0x0000000000000000000000000000000000000000') {
+            throw new Error ('Estudante não encontrado')
+        }
+       
+        const times = await person(wallet).methods.getCheckIn(date).call({
             from: accounts[0],
         })
+
         return times
     }
 
     async exits(ra, date) {
+        const accounts = await web3.eth.getAccounts()
         const wallet = await inteliFactory.methods.getWallet(ra).call({
             from: accounts[0],
         })
-        const times = await person.methods.getCheckOut(wallet, date).call({
+        const times = await person(wallet).methods.getCheckOut(date).call({
             from: accounts[0],
         })
         return times
     }
 
-    async AllAccesses() {
-        const wallets = await accessCampus.methods.getStudentEntries().call({
+    async allAccesses(date) {
+        const accounts = await web3.eth.getAccounts()
+        const wallets = await accessCampus.methods.getCheckIns(date).call({
             from: accounts[0],
         })
-        const ras = []
-        for (wallet of wallets) {
-            const ra = await inteliFactory.methods.getStudent(wallet).call({
-                from: accounts[0],
-            })
-            ras.push(ra)
-        }
-        return ras
+        console.log(wallets)
+        // const ras = []
+        // for (let i=0; i<wallets.length;i++) {
+        //     const ra = await inteliFactory.methods.getStudent(wallets[i]).call({
+        //         from: accounts[0],
+        //     })
+        //     ras.push(ra)
+        // }
+        // return ras
     }
 
-    async AllExits() {
-        const wallets = await accessCampus.methods.getStudentExits().call({
+    async allExits(date) {
+        const accounts = await web3.eth.getAccounts()
+        const wallets = await accessCampus.methods.getCheckOuts(date).call({
             from: accounts[0],
         })
         const ras = []
-        for (wallet of wallets) {
-            const ra = await inteliFactory.methods.getStudent(wallet).call({
+        for (let i=0; i<wallets.length;i++) {
+
+            const ra = await inteliFactory.methods.getStudent(wallets[i]).call({
                 from: accounts[0],
             })
             ras.push(ra)
@@ -140,9 +138,15 @@ class Student {
     }
 
     async balance(ra) {
+        const accounts = await web3.eth.getAccounts()
         const wallet = await inteliFactory.methods.getWallet(ra).call({
             from: accounts[0],
         })
+
+        if (wallet == '0x0000000000000000000000000000000000000000') {
+            throw new Error ('Estudante não encontrado')
+        }
+
         const balance = await person(wallet).methods.getBalance().call({
             from: accounts[0],
         })
@@ -150,16 +154,16 @@ class Student {
         return balance
     }
 
-    async transferMoney(raOrigem, quantity, raDestino) {
-        const walletOrigem = await inteliFactory.methods.getWallet(raOrigem).call({
+    async transferMoney(senderWallet, quantity, receiverWallet) {
+        const sender = await inteliFactory.methods.getWallet(senderWallet).call({
             from: accounts[0],
         })
 
-        const walletDestino = await inteliFactory.methods.getWallet(raDestino).call({
+        const receiver = await inteliFactory.methods.getWallet(receiverWallet).call({
             from: accounts[0],
         })
 
-        const transfer = await person(walletOrigem).methods.transferMoney(walletDestino, quantity).call({
+        const transfer = await person(senderWallet).methods.transferMoney(receiverWallet, quantity).call({
             from: accounts[0],
         })
     }
