@@ -3,8 +3,8 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 
 //Importações necessárias
-const studentController = require("../controllers/Student");
-const studentAuth = require("../Middlewares/unsureAuthenticated");
+const studentController = require("../controllers/student");
+const studentAuth = require("../middlewares/unsureAuthenticated");
 
 //ROTAS com seus respectivos controllers e middlewares
 

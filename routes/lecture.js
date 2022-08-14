@@ -4,7 +4,7 @@ const { body, validationResult } = require("express-validator");
 
 //Importações necessárias
 const lectureController = require("../controllers/lecture");
-const studentAuth = require("../Middlewares/unsureAuthenticated");
+const studentAuth = require("../middlewares/unsureAuthenticated");
 
 const multer = require('multer')
 
