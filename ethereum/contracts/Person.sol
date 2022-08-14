@@ -28,6 +28,15 @@ contract Person is ERC1155Holder {
         owner = _owner;
     }
 
+    function getBalance(
+	) public view returns(uint256){
+		return address(this).balance;
+	}
+    
+    function transferMoney(address payable _to, uint _value) external payable{
+       _to.transfer(_value);
+    }
+
     function registerCheckIn(string memory _date, uint64 _unixTime) public {
         require(msg.sender == owner);
         campusCheckIn[_date].push(_unixTime);
