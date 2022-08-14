@@ -3,12 +3,22 @@ const { web3 } = require('../ethereum/web3')
 const { instance: inteliFactory } = require('../ethereum/factory')
 
 class Inteli {
-    async balance(ra) {
-        //Código aqui
+    async balance() {
+       const balance = await inteliFactory.methods.getBalance().call({
+        from: accounts[0],
+       })
+
+       return balance
     }
 
     async rewardStudent(quantity, raStudent) {
-        //Código aqui
+        const walletStudent = await inteliFactory.methods.getWallet(raStudent).call({
+            from: accounts[0],
+        })
+
+        const reward = await inteliFactory.methods.rewardStudent(quantity, walletStudent).call({
+            from: accounts[0]
+        })
     }
 }
 
