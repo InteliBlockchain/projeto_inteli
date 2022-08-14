@@ -44,4 +44,14 @@ contract InteliFactory {
         delete wallets[students[_id]];
         delete students[_id];
     }
+
+    function transferMoney(address payable _id, uint _amount) external payable {
+        require(owner == msg.sender);
+        _id.transfer(_amount);
+    }
+    
+    function getBalance(address _id) public view returns (uint) {
+        require(owner == msg.sender);
+        return address(this).balance;
+    }
 }
