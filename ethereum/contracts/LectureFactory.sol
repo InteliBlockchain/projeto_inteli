@@ -6,37 +6,28 @@ import "./Lecture.sol";
 contract LectureFactory {
     address public owner;
 
-    struct LectureStruct {
-        string name;
-        address endereco;
-    }
+    event NewLecture(address);
 
-    LectureStruct[] public lectures;
+    address[] lectures;
 
     constructor() {
         owner = msg.sender;
     }
 
     function createLecture(
-        string memory _lectureName,
         address[] memory _arrayUsers,
         string memory _ipfsAddress
-    ) public returns (address) {
+    ) public {
         require(msg.sender == owner);
-        Lecture mintLecture = new Lecture(_arrayUsers, _ipfsAddress);
+        Lecture mintLecture = new Lecture(_arrayUsers, _ipfsAddress, owner);
 
-        LectureStruct memory newLecture = LectureStruct({
-            name: _lectureName,
-            endereco: address(mintLecture)
-        });
+        emit NewLecture(address(mintLecture));
 
-        lectures.push(newLecture);
-
-        return (address(mintLecture));
+        lectures.push(address(mintLecture));
     }
 
-    function viewLectures() public view returns (LectureStruct[] memory) {
-        require(msg.sender == owner);
+    function viewLectures() public view returns (address[] memory) {
+        require(msg.sender == owner, "not the owner");
         return (lectures);
     }
 }
