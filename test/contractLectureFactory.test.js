@@ -4,6 +4,7 @@ const assert = require('assert')
 const ganache = require('ganache')
 const Web3 = require('web3')
 const web3 = new Web3(ganache.provider())
+const truffleAssert = require('truffle-assertions')
 //compiled smart contracts
 const compiledLectureFactory = require('../ethereum/artifacts/ethereum/contracts/LectureFactory.sol/LectureFactory.json')
 
@@ -29,7 +30,7 @@ beforeEach(async () => {
     newLectureAddress = JSON.parse(JSON.stringify(newLecture.events.NewLecture.returnValues))[0]
 })
 
-//test lectureFactory functionalities 
+//test lectureFactory functionalities
 describe('lectureFactory tests', async () => {
     it('deploys lectureFactory contract', () => {
         assert.ok(lectureFactory.options.address)
@@ -48,13 +49,36 @@ describe('lectureFactory tests', async () => {
         )
     })
 
+    it('"not owner" error creates a new lecture', async () => {
+        await truffleAssert.fails(
+            lectureFactory.methods
+                .createLecture([accounts[0], accounts[1], accounts[2], accounts[3]], '')
+                .send({ from: accounts[1], gas: '25000000' }),
+            truffleAssert.ErrorType.REVERT
+        )
+    })
+
     it('returns the same address as the one that exist in the contract`s array', async () => {
         let lectures = await lectureFactory.methods.viewLectures().call({ from: accounts[0] })
         assert.equal(lectures[lectures.length - 1], newLectureAddress)
     })
 
+    it('"not owner" error returns the same address as the one that exist in the contract`s array', async () => {
+        await truffleAssert.fails(
+            lectureFactory.methods.viewLectures().call({ from: accounts[1] }),
+            truffleAssert.ErrorType.REVERT
+        )
+    })
+
     it('sees if all contracts are in the lectures`s array', async () => {
         let lectures = await lectureFactory.methods.viewLectures().call({ from: accounts[0] })
         assert.equal(lectures.length, 1)
+    })
+
+    it('"not owner" error sees if all contracts are in the lectures`s array', async () => {
+        await truffleAssert.fails(
+            lectureFactory.methods.viewLectures().call({ from: accounts[1] }),
+            truffleAssert.ErrorType.REVERT
+        )
     })
 })

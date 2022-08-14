@@ -22,8 +22,8 @@ contract AccessCampus {
 
     event getCheck(Access[]);
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "not owner");
+    modifier isOwner() {
+        require(msg.sender == owner, "Not owner");
         _;
     }
 
@@ -35,7 +35,7 @@ contract AccessCampus {
         address _userAddress,
         uint256 _time,
         string memory _date
-    ) public onlyOwner {
+    ) public isOwner {
         Access memory checkIn = Access({
             userAddress: _userAddress,
             time: _time
@@ -47,7 +47,7 @@ contract AccessCampus {
         address _userAddress,
         uint256 _time,
         string memory _date
-    ) public onlyOwner {
+    ) public isOwner {
         Access memory checkOut = Access({
             userAddress: _userAddress,
             time: _time
@@ -57,7 +57,7 @@ contract AccessCampus {
 
     function getCheckIns(string memory _date)
         public
-        onlyOwner
+        isOwner
         returns (Access[] memory)
     {
         emit getCheck(checkIns[_date]);
@@ -66,7 +66,7 @@ contract AccessCampus {
 
     function getCheckOuts(string memory _date)
         public
-        onlyOwner
+        isOwner
         returns (Access[] memory)
     {
         emit getCheck(checkOuts[_date]);

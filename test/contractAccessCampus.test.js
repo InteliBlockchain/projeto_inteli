@@ -4,6 +4,8 @@ const assert = require('assert')
 const ganache = require('ganache')
 const Web3 = require('web3')
 const web3 = new Web3(ganache.provider())
+const decoder = require('./utils')
+const truffleAssert = require('truffle-assertions')
 //compiled smart contracts
 const compiledAccessCampus = require('../ethereum/artifacts/ethereum/contracts/AccessCampus.sol/AccessCampus.json')
 
@@ -48,6 +50,16 @@ describe('access campus tests', async () => {
         }
     })
 
+    it('checks error "not owner" in checksIn and checksOut', async () => {
+        const contractsFunctions = [accessCampus.methods.registerCheckIn, accessCampus.methods.registerCheckOut]
+        for (element of contractsFunctions) {
+            await truffleAssert.fails(
+                element(accounts[0], 12345, '14/08/2022').send({ from: accounts[1], gas: '25000000' }),
+                truffleAssert.ErrorType.REVERT
+            )
+        }
+    })
+
     it('sees if getCheckIns and getCheckOuts returns the correct value and the correct amount of elements', async () => {
         const contractsFunctions = [
             accessCampus.methods.getCheckIns('14/08/2022'),
@@ -61,6 +73,19 @@ describe('access campus tests', async () => {
             assert.equal(resulAddress, accounts[0])
             assert.equal(resulTime, 12345)
             assert.equal(resulAmount, 1)
+        }
+    })
+
+    it('checks error "not owner" in getCheckIns and getCheckOuts', async () => {
+        const contractsFunctions = [
+            accessCampus.methods.getCheckIns('14/08/2022'),
+            accessCampus.methods.getCheckOuts('14/08/2022'),
+        ]
+        for (let i = 0; i < contractsFunctions.length; i++) {
+            await truffleAssert.fails(
+                contractsFunctions[i].send({ from: accounts[1], gas: '25000000' }),
+                truffleAssert.ErrorType.REVERT
+            )
         }
     })
 })

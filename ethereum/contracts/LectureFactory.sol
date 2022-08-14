@@ -10,6 +10,11 @@ contract LectureFactory {
 
     address[] lectures;
 
+    modifier isOwner() {
+        require(owner == msg.sender, "Not owner");
+        _;
+    }
+
     constructor() {
         owner = msg.sender;
     }
@@ -17,8 +22,7 @@ contract LectureFactory {
     function createLecture(
         address[] memory _arrayUsers,
         string memory _ipfsAddress
-    ) public {
-        require(msg.sender == owner);
+    ) public isOwner {
         Lecture mintLecture = new Lecture(_arrayUsers, _ipfsAddress, owner);
 
         emit NewLecture(address(mintLecture));
@@ -26,8 +30,7 @@ contract LectureFactory {
         lectures.push(address(mintLecture));
     }
 
-    function viewLectures() public view returns (address[] memory) {
-        require(msg.sender == owner, "not the owner");
+    function viewLectures() public view isOwner returns (address[] memory) {
         return (lectures);
     }
 }
