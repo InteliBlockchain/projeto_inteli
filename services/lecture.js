@@ -20,13 +20,15 @@ function getKey(size) {
     return randomBytesAsync(size)
 }
 
-class Student {
-    async createLecture(file, lectureName, ras, time) {
+class Lecture {
+    async createLecture(file, lectureName, ras, description) {
         // Get de wallet do Inteli
         const accounts = await web3.eth.getAccounts()
 
         // Get de todas as wallets a partir do Array da Ras
         const wallets = []
+        const rasWithoutWallet = []
+
         for (let i = 0; i < ras.length; i++) {
             const wallet = await inteliFactory.methods.getWallet(ras[i]).call({ from: accounts[0] })
 
@@ -34,7 +36,14 @@ class Student {
             if (wallet != '0x0000000000000000000000000000000000000000') {
                 // Adicionar a wallet ao array
                 wallets.push(wallet)
+            } else {
+                rasWithoutWallet.push(ras[i])
             }
+        }
+        // caso algum dos RAs passados não corresponda a uma carteira:
+        if (rasWithoutWallet.length > 0) {
+            const formatedRasWithoutWallet = rasWithoutWallet.join(', ')
+            throw new Error("Erro! Não encontradas carteiras para os seguintes R.A's: " + formatedRasWithoutWallet)
         }
 
         // Conectar ao banco de dados
@@ -60,7 +69,7 @@ class Student {
         await fs.writeFile(filePath, file.buffer)
 
         // Criar nova NFT no NFT Storage (devolve url)
-        const result = await storeNFT(filePath, nameHash, time)
+        const result = await storeNFT(filePath, nameHash, description)
         const parsedResult = JSON.parse(JSON.stringify(result))
 
         // Deletar o arquivo criado
@@ -83,6 +92,9 @@ class Student {
     async getLecturesStudent(ra) {
         const accounts = await web3.eth.getAccounts()
 
+        // Conectar ao banco de dados
+        const db = await connectToDatabase()
+
         // Executa a função getWallet do contrato inteliFactory
         const wallet = await inteliFactory.methods.getWallet(ra).call({
             from: accounts[0],
@@ -104,13 +116,21 @@ class Student {
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
             const response = await fetch(formatedIpfsLink)
             const metadata = await response.json()
+            const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
+            metadata.name = lectureFromDb.name
             lecturesMetadata.push(metadata)
         }
+
+        // Fechar o banco de dados
+        await db.close()
 
         return lecturesMetadata
     }
 
     async getLectures() {
+        // Conectar ao banco de dados
+        const db = await connectToDatabase()
+
         const accounts = await web3.eth.getAccounts()
         const lectures = await lectureFactory.methods.viewLectures().call({ from: accounts[0] })
 
@@ -121,13 +141,18 @@ class Student {
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
             const response = await fetch(formatedIpfsLink)
             const metadata = await response.json()
+            const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
+            metadata.name = lectureFromDb.name
             lecturesMetadata.push(metadata)
         }
+
+        // Fechar o banco de dados
+        await db.close()
 
         return lecturesMetadata
     }
 }
 
 module.exports = {
-    Student,
+    Lecture,
 }

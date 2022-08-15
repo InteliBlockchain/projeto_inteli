@@ -23,11 +23,14 @@ app.use(
 
 const PORT = process.env.PORT || 3001;
 
-const StudentRouter = require("./routes/student");
-app.use("/student", StudentRouter);
+const studentRouter = require("./routes/student");
+app.use("/student", studentRouter);
 
 const lectureRouter = require("./routes/lecture");
 app.use("/lecture", lectureRouter);
+
+const inteliRouter = require("./routes/inteli");
+app.use("/inteli", inteliRouter);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta http://localhost:${PORT}`);

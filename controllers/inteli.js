@@ -4,7 +4,7 @@ require('express-async-errors')
 
 const Inteli = new inteliService.Inteli()
 
-const Balance = (req, res) => {
+const balance = async (req, res) => {
     //Pega as infos da requisição
     const { ra } = req.params
 
@@ -19,7 +19,7 @@ const Balance = (req, res) => {
     
 }
 
-const rewardStudent = (req, res) => {
+const rewardStudent = async (req, res) => {
     //Pega as infos da requisição
     const { quantity, raStudent } = req.body
 
@@ -45,6 +45,6 @@ const rewardStudent = (req, res) => {
 
 //Exporta as funções do controller para o ROUTER
 module.exports = {
-    Balance,
+    balance,
     rewardStudent
 }

@@ -25,7 +25,7 @@ const createObject = (contractName, functionName, values) => {
         return returnObject
     }
     else {
-        console.log("Contract does not exist")
+        throw new Error("Contract does not exist")
     }
 }
 

@@ -50,7 +50,7 @@ const createStudent = async (req, res) => {
 
         res.send('Usuário criado com sucesso')
     } catch (err) {
-        res.status(400).send('Erro ao criar carteira para o estudante')
+        res.status(400).send(err.message)
     }
 }
 
@@ -104,8 +104,7 @@ const checkIn = async (req, res) => {
         await Student.checkIn(ra, formatedDate.getTime(), formatDate(dateTime))
         res.send('Registro de entrada feito com sucesso')
     } catch (err) {
-        console.log(err)
-        res.status(500).send(err)
+        res.status(500).send(err.message)
     }
 }
 
@@ -129,7 +128,7 @@ const checkOut = async (req, res) => {
         await Student.checkOut(ra, formatedDate.getTime(), formatDate(dateTime))
         res.send('Registro de saída feito com sucesso')
     } catch (err) {
-        res.status(500).send()
+        res.status(500).send(err.message)
     }
 }
 
@@ -177,7 +176,7 @@ const exits = async (req, res) => {
         const times = await Student.accesses(ra, date)
         res.send(times)
     } catch (err) {
-        res.status(500).send()
+        res.status(500).send(err.message)
     }
 }
 
@@ -195,13 +194,14 @@ const allAccesses = async (req, res) => {
 
 const allExits = async (req, res) => {
     //Pega as infos da requisição
-    const { date } = req.query
+    const { date } = req.params
 
     try {
         const ras = await Student.allExits(date)
         res.send(ras)
     } catch (err) {
-        res.status(500).send()
+        console.log(err)
+        res.status(500).send(err.message)
     }
 }
 
@@ -219,18 +219,16 @@ const balance = async (req, res) => {
         return
     }
     try {
-        //Tratamento das respostas do método da classe
         const balance = await Student.balance(ra)
         res.send(balance)
     } catch (err) {
-
-        res.status(500).send()
+        res.status(500).send(err.message)
     }
 }
 
 const transferMoney = async (req, res) => {
     //Pega as infos da requisição
-    const { senderWallet, quantity, receiverWallet } = req.body
+    const { from, quantity, to } = req.body
 
     //Valida se algum paremetro é inválido
     const errors = validationResult(req)
@@ -244,11 +242,11 @@ const transferMoney = async (req, res) => {
 
     try {
         //Tratamento das respostas do método da classe
-        await Student.transferMoney(senderWallet, quantity, receiverWallet)
+        await Student.transferMoney(from, quantity, to)
 
         res.send('Transação realizada com sucesso')
     } catch (err) {
-        res.status(500).send("Não foi possível concretizar a transação")
+        res.status(500).send(err.message)
     }
 }
 

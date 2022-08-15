@@ -3,7 +3,7 @@ const router = express.Router();
 const { body, validationResult } = require("express-validator");
 
 //Importações necessárias
-const studentController = require("../controllers/inteli");
+const inteliController = require("../controllers/inteli");
 const studentAuth = require("../middlewares/unsureAuthenticated");
 
 //ROTAS com seus respectivos controllers e middlewares
@@ -13,13 +13,13 @@ router.post(
   [body("quantity", "Data é necessário").exists({ checkFalsy: true })],
   [body("raStudent", "RA do estudante é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
-  studentController.rewardStudent
+  inteliController.rewardStudent
 );
 
 router.get(
   "/balance/:ra",
   studentAuth.unsureAuthenticated,
-  studentController.Balance
+  inteliController.balance
 );
 
 //Exporta o ROUTER

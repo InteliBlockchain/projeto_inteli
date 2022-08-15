@@ -81,9 +81,9 @@ router.get(
 
 router.post(
   "/transferMoney",
-  [body("raOrigem", "RA de Origem é necessário").exists({ checkFalsy: true })],
+  [body("from", "RA de Origem é necessário").exists({ checkFalsy: true })],
   [body("quantity", "Data é necessário").exists({ checkFalsy: true })],
-  [body("raDestino", "RA de destino é necessário").exists({ checkFalsy: true })],
+  [body("to", "RA de destino é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
   studentController.transferMoney
 );
