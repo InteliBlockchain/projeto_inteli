@@ -4,7 +4,7 @@ const assert = require('assert')
 const ganache = require('ganache')
 const Web3 = require('web3')
 const web3 = new Web3(ganache.provider())
-const decoder = require('./utils')
+const decoder = require('../ethereum/utils/structDecoder')
 const truffleAssert = require('truffle-assertions')
 //compiled smart contracts
 const compiledAccessCampus = require('../ethereum/artifacts/ethereum/contracts/AccessCampus.sol/AccessCampus.json')
@@ -66,13 +66,21 @@ describe('access campus tests', async () => {
             accessCampus.methods.getCheckOuts('14/08/2022'),
         ]
         for (let i = 0; i < contractsFunctions.length; i++) {
-            let resul = await contractsFunctions[i].send({ from: accounts[0], gas: '25000000' })
-            let resulAddress = JSON.parse(JSON.stringify(resul.events.getCheck.returnValues))[0][0][0]
-            let resulTime = JSON.parse(JSON.stringify(resul.events.getCheck.returnValues))[0][0][1]
-            let resulAmount = JSON.parse(JSON.stringify(resul.events.getCheck.returnValues))[0].length
-            assert.equal(resulAddress, accounts[0])
-            assert.equal(resulTime, 12345)
-            assert.equal(resulAmount, 1)
+            // let resul = await contractsFunctions[i].send({ from: accounts[0], gas: '25000000' })
+            // let resulAddress = JSON.parse(JSON.stringify(resul.events.getCheck.returnValues))[0][0][0]
+            // let resulTime = JSON.parse(JSON.stringify(resul.events.getCheck.returnValues))[0][0][1]
+            // let resulAmount = JSON.parse(JSON.stringify(resul.events.getCheck.returnValues))[0].length
+            // assert.equal(resulAddress, accounts[0])
+            // assert.equal(resulTime, 12345)
+            // assert.equal(resulAmount, 1)
+            let objectsReturns = []
+            let returnValues = await contractsFunctions[i].call({ from: accounts[0] })
+            returnValues.map((object) => {
+                objectsReturns.push(decoder.createAccessObject('accessCampus', 'getCheckIns', [object[0], object[1]]))
+            })
+            assert.equal(objectsReturns[0].userAddress, accounts[0])
+            assert.equal(objectsReturns[0].time, 12345)
+            assert.equal(objectsReturns.length, 1)
         }
     })
 

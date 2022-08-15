@@ -68,13 +68,11 @@ contract InteliFactory {
         delete students[_ra];
     }
 
-    function transferMoney(address payable _id, uint _amount) external payable {
-        require(owner == msg.sender);
+    function transferMoney(address payable _id, uint _amount) external isOwner payable {
         _id.transfer(_amount);
     }
     
-    function getBalance() public view returns (uint) {
-        require(owner == msg.sender);
+    function getBalance() public isOwner view returns (uint) {
         return address(this).balance;
     }
 }

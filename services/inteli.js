@@ -4,11 +4,11 @@ const { instance: inteliFactory } = require('../ethereum/factory')
 
 class Inteli {
     async balance() {
-       const balance = await inteliFactory.methods.getBalance().call({
-        from: accounts[0],
-       })
+        const balance = await inteliFactory.methods.getBalance().call({
+            from: accounts[0],
+        })
 
-       return balance
+        return balance
     }
 
     async rewardStudent(quantity, raStudent) {
@@ -17,7 +17,7 @@ class Inteli {
         })
 
         const reward = await inteliFactory.methods.rewardStudent(quantity, walletStudent).call({
-            from: accounts[0]
+            from: accounts[0],
         })
     }
 }

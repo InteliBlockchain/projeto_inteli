@@ -20,8 +20,6 @@ contract AccessCampus {
     mapping(string => Access[]) checkIns;
     mapping(string => Access[]) checkOuts;
 
-    event getCheck(Access[]);
-
     modifier isOwner() {
         require(msg.sender == owner, "Not owner");
         _;
@@ -57,19 +55,19 @@ contract AccessCampus {
 
     function getCheckIns(string memory _date)
         public
+        view
         isOwner
         returns (Access[] memory)
     {
-        emit getCheck(checkIns[_date]);
         return checkIns[_date];
     }
 
     function getCheckOuts(string memory _date)
         public
+        view
         isOwner
         returns (Access[] memory)
     {
-        emit getCheck(checkOuts[_date]);
         return checkOuts[_date];
     }
 }

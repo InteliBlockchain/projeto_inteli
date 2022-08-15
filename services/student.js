@@ -29,7 +29,7 @@ class Student {
         const walletAddress = await this.getWallet(ra)
 
         if (walletAddress == '0x0000000000000000000000000000000000000000') {
-            throw new Error ('Estudante não encontrado')
+            throw new Error('Estudante não encontrado')
         }
 
         const accounts = await web3.eth.getAccounts()
@@ -48,7 +48,7 @@ class Student {
         })
 
         if (wallet == '0x0000000000000000000000000000000000000000') {
-            throw new Error ('Estudante não encontrado')
+            throw new Error('Estudante não encontrado')
         }
 
         await accessCampus.methods.registerCheckIn(wallet, time, date).send({
@@ -66,7 +66,7 @@ class Student {
         })
 
         if (wallet == '0x0000000000000000000000000000000000000000') {
-            throw new Error ('Estudante não encontrado')
+            throw new Error('Estudante não encontrado')
         }
 
         await accessCampus.methods.registerCheckOut(wallet, time, date).send({
@@ -84,9 +84,9 @@ class Student {
         })
 
         if (wallet == '0x0000000000000000000000000000000000000000') {
-            throw new Error ('Estudante não encontrado')
+            throw new Error('Estudante não encontrado')
         }
-       
+
         const times = await person(wallet).methods.getCheckIn(date).call({
             from: accounts[0],
         })
@@ -111,6 +111,22 @@ class Student {
             from: accounts[0],
         })
         console.log(wallets)
+
+        //Call back funcionando
+        // const accounts = await web3.eth.getAccounts()
+
+        // let wallets = await accessCampus.methods.getCheckIns(date).call({
+        //     from: accounts[0],
+        // })
+
+        // let objectsReturns = []
+
+        // wallets.map((object) => {
+        //     console.log(`Peguei esse item primeiro ${object[0]} e depois esse ${object[1]}`)
+        //     objectsReturns.push(decoder.createAccessObject('accessCampus', 'getCheckIns', [object[0], object[1]]))
+        // })
+        // console.log(objectsReturns)
+
         // const ras = []
         // for (let i=0; i<wallets.length;i++) {
         //     const ra = await inteliFactory.methods.getStudent(wallets[i]).call({
@@ -127,8 +143,7 @@ class Student {
             from: accounts[0],
         })
         const ras = []
-        for (let i=0; i<wallets.length;i++) {
-
+        for (let i = 0; i < wallets.length; i++) {
             const ra = await inteliFactory.methods.getStudent(wallets[i]).call({
                 from: accounts[0],
             })
@@ -144,13 +159,13 @@ class Student {
         })
 
         if (wallet == '0x0000000000000000000000000000000000000000') {
-            throw new Error ('Estudante não encontrado')
+            throw new Error('Estudante não encontrado')
         }
 
         const balance = await person(wallet).methods.getBalance().call({
             from: accounts[0],
         })
-    
+
         return balance
     }
 
