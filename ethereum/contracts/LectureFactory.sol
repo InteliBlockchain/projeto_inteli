@@ -6,8 +6,6 @@ import "./Lecture.sol";
 contract LectureFactory {
     address public owner;
 
-    event NewLecture(address);
-
     address[] lectures;
 
     modifier isOwner() {

@@ -58,7 +58,7 @@ contract InteliFactory {
     }
 
     function removeStudent(string memory _ra) public isOwner {
-        require(students[_id] != address(0), "Student does not exist");
+        require(students[_ra] != address(0), "Student does not exist");
         for (uint256 i = 0; i >= arrStudents.length; i++) {
             if (arrStudents[i] == students[_ra]) {
                 delete arrStudents[i];

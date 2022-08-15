@@ -37,7 +37,7 @@ contract Person is ERC1155Holder {
        _to.transfer(_value);
     }
 
-    function registerCheckIn(string memory _date, uint _time)
+    function registerCheckIn(string memory _date, uint64 _time)
         public
         isOwner
     {
@@ -50,7 +50,7 @@ contract Person is ERC1155Holder {
         isOwner
         returns (uint64[] memory)
     {
-        return campusCheckIn[_id];
+        return campusCheckIn[_date];
     }
 
     function registerCheckOut(string memory _date, uint64 _unixTime)
@@ -66,7 +66,7 @@ contract Person is ERC1155Holder {
         isOwner
         returns (uint64[] memory)
     {
-        return campusCheckOut[_id];
+        return campusCheckOut[_date];
     }
 
     function newActivity(string memory _activityType, address _activityAddress)
