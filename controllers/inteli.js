@@ -10,13 +10,12 @@ const balance = async (req, res) => {
 
     try {
         //Tratamento das respostas do método da classe
-        const balance = await Inteli.balance(ra);
+        const balance = await Inteli.balance(ra)
 
-        res.send(balance);
-    } catch(err) {
-        res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
+        res.send(balance)
+    } catch (err) {
+        res.status(500).send(err.message)
     }
-    
 }
 
 const rewardStudent = async (req, res) => {
@@ -31,20 +30,19 @@ const rewardStudent = async (req, res) => {
             error: errors.errors[0].msg,
         })
         return
-    } else {
-        try {
-            //Tratamento das respostas do método da classe
-            await Inteli.transferMoney(quantity, raStudent);
+    }
+    try {
+        //Tratamento das respostas do método da classe
+        await Inteli.rewardStudent(quantity, raStudent)
 
-            res.send('Dinheiro Transferido com sucesso');
-        } catch(err) {
-            res.status(500).send('Solicitação não autorizada! Tente novamente mais tarde')
-        }
+        res.send('Dinheiro Transferido com sucesso')
+    } catch (err) {
+        res.status(500).send(err.message)
     }
 }
 
 //Exporta as funções do controller para o ROUTER
 module.exports = {
     balance,
-    rewardStudent
+    rewardStudent,
 }

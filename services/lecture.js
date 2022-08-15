@@ -144,6 +144,16 @@ class Lecture {
             const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
             metadata.name = lectureFromDb.name
             lecturesMetadata.push(metadata)
+
+            const lecturePeople = await lecture(lectures[i]).methods.returnPeople().call({ from: accounts[0] })
+
+            const studentRas = []
+
+            for (let y = 0; y < lecturePeople.length; y++) {
+                const ra = await inteliFactory.methods.getStudent(lecturePeople[y]).call({ from: accounts[0] })
+                studentRas.push(ra)
+            }
+            metadata.students = studentRas
         }
 
         // Fechar o banco de dados

@@ -10,14 +10,14 @@ const studentAuth = require("../middlewares/unsureAuthenticated");
 
 router.post(
   "/rewardStudent",
-  [body("quantity", "Data é necessário").exists({ checkFalsy: true })],
-  [body("raStudent", "RA do estudante é necessário").exists({ checkFalsy: true })],
+  [body("quantity", "quantity é necessário").exists({ checkFalsy: true })],
+  [body("raStudent", "raStudent é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
   inteliController.rewardStudent
 );
 
 router.get(
-  "/balance/:ra",
+  "/balance",
   studentAuth.unsureAuthenticated,
   inteliController.balance
 );

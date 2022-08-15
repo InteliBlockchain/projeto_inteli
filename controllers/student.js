@@ -170,9 +170,10 @@ const exits = async (req, res) => {
         })
         return
     }
+
     try {
         //Tratamento das respostas do método da classe
-        const times = await Student.accesses(ra, date)
+        const times = await Student.exits(ra, date)
         res.send(times)
     } catch (err) {
         res.status(500).send(err.message)

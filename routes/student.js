@@ -24,6 +24,14 @@ router.post(
   studentController.getWallet
 );
 
+//Ver ra de uma Wallet
+router.post(
+  "/ra",
+  [body("wallet", "wallet é necessária").exists({ checkFalsy: true })],
+  studentAuth.unsureAuthenticated,
+  studentController.getStudent
+);
+
 // Remover estudante
 router.delete(
   "/:ra",

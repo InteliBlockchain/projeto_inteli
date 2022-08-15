@@ -28,4 +28,8 @@ contract Lecture is ERC1155 {
     function burnNFT(address _address) public isOwner {
         _burn(_address, 1, 1);
     }
+
+    function returnPeople() view public isOwner returns (address[] memory) {
+        return people;
+    }
 }

@@ -18,13 +18,13 @@ class Inteli {
             from: accounts[0],
         })
 
-        if (walletStudent !== '0x0000000000000000000000000000000000000000') {
-            const reward = await inteliFactory.methods.transferMoney(walletStudent, quantity).send({
-                from: accounts[0],
-            })
-        }else {
-            throw new Error("Student does not exist")
+        if (walletStudent == '0x0000000000000000000000000000000000000000') {
+            throw new Error('Student does not exist')
         }
+
+        await inteliFactory.methods.transferMoney(walletStudent, quantity).send({
+            from: accounts[0],
+        })
     }
 }
 

@@ -19,14 +19,21 @@ class Student {
     async getWallet(ra) {
         const accounts = await web3.eth.getAccounts()
         const wallet = await inteliFactory.methods.getWallet(ra).call({ from: accounts[0] })
+
+        if (wallet === '0x0000000000000000000000000000000000000000') {
+            throw new Error(`Estudante com este RA ${ra} não encontrado`)
+        }
+        
         return wallet
     }
 
     async createStudent(ra) {
         const accounts = await web3.eth.getAccounts()
 
+        const wallet = await inteliFactory.methods.getWallet(ra).call({ from: accounts[0] })
+
         // confere se a carteira já existe
-        if ((await this.getWallet(ra)) !== '0x0000000000000000000000000000000000000000') {
+        if (wallet !== '0x0000000000000000000000000000000000000000') {
             throw new Error(`Carteira já existente para RA ${ra}`)
         }
 
@@ -41,10 +48,6 @@ class Student {
         const accounts = await web3.eth.getAccounts()
         const walletAddress = await this.getWallet(ra)
 
-        if (walletAddress === '0x0000000000000000000000000000000000000000') {
-            throw new Error('Estudante não encontrado')
-        }
-
         await inteliFactory.methods.removeStudent(ra).send({
             from: accounts[0],
         })
@@ -57,10 +60,6 @@ class Student {
         const accounts = await web3.eth.getAccounts()
         const wallet = await this.getWallet(ra)
 
-        if (wallet === '0x0000000000000000000000000000000000000000') {
-            throw new Error('Estudante não encontrado')
-        }
-
         await accessCampus.methods.registerCheckIn(wallet, time, date).send({
             from: accounts[0],
         })
@@ -71,11 +70,7 @@ class Student {
 
     async checkOut(ra, time, date) {
         const accounts = await web3.eth.getAccounts()
-        const wallet = this.getWallet(ra)
-
-        if (wallet == '0x0000000000000000000000000000000000000000') {
-            throw new Error('Estudante não encontrado')
-        }
+        const wallet = await this.getWallet(ra)
 
         await accessCampus.methods.registerCheckOut(wallet, time, date).send({
             from: accounts[0],
@@ -87,13 +82,7 @@ class Student {
 
     async accesses(ra, date) {
         const accounts = await web3.eth.getAccounts()
-        const wallet = await inteliFactory.methods.getWallet(ra).call({
-            from: accounts[0],
-        })
-
-        if (wallet == '0x0000000000000000000000000000000000000000') {
-            throw new Error('Estudante não encontrado')
-        }
+        const wallet = await this.getWallet(ra)
 
         const times = await person(wallet).methods.getCheckIn(date).call({
             from: accounts[0],
@@ -104,7 +93,8 @@ class Student {
 
     async exits(ra, date) {
         const accounts = await web3.eth.getAccounts()
-        const wallet = this.getWallet(ra)
+        const wallet = await this.getWallet(ra)
+
         const times = await person(wallet).methods.getCheckOut(date).call({
             from: accounts[0],
         })
@@ -171,10 +161,6 @@ class Student {
         const accounts = await web3.eth.getAccounts()
         const wallet = await this.getWallet(ra)
 
-        if (wallet == '0x0000000000000000000000000000000000000000') {
-            throw new Error('Estudante não encontrado')
-        }
-
         const balance = await person(wallet).methods.getBalance().call({
             from: accounts[0],
         })
@@ -184,16 +170,25 @@ class Student {
 
     async transferMoney(from, quantity, to) {
         const accounts = await web3.eth.getAccounts()
-        const sender = await this.getWallet(from)
-
-        let receiver = null
+        const fromWallet = await this.getWallet(from)
+        
+        let toWallet = null
         if (to == 'Inteli') {
-            receiver = await this.getWallet(contractsAdresses.addresses.at(-1).InteliFactory)
+            toWallet = contractsAdresses.addresses.at(-1).InteliFactory
         } else {
-            receiver = await this.getWallet(to)
+            toWallet = await this.getWallet(to)
         }
 
-        await person(sender).methods.transferMoney(to, quantity).send({
+        if (quantity === "0") {
+            throw new Error("Quantidade inválida para transferência")
+
+        }
+
+        if (toWallet === fromWallet) {
+            throw new Error("Carteiras iguais, transferência inválida")
+        }
+        
+        await person(fromWallet).methods.transferMoney(toWallet, quantity).send({
             from: accounts[0],
         })
     }
