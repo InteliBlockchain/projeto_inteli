@@ -76,7 +76,7 @@ describe('access campus tests', async () => {
             let objectsReturns = []
             let returnValues = await contractsFunctions[i].call({ from: accounts[0] })
             returnValues.map((object) => {
-                objectsReturns.push(decoder.createAccessObject('accessCampus', 'getCheckIns', [object[0], object[1]]))
+                objectsReturns.push(decoder.createObject('accessCampus', 'getCheckIns', [object[0], object[1]]))
             })
             assert.equal(objectsReturns[0].userAddress, accounts[0])
             assert.equal(objectsReturns[0].time, 12345)

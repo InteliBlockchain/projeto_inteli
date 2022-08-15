@@ -18,6 +18,8 @@ contract InteliFactory {
     mapping(address => string) wallets;
     address[] arrStudents;
 
+    event Received(address, uint256);
+
     constructor() {
         owner = msg.sender;
     }
@@ -59,7 +61,7 @@ contract InteliFactory {
 
     function removeStudent(string memory _ra) public isOwner {
         require(students[_ra] != address(0), "Student does not exist");
-        for (uint256 i = 0; i >= arrStudents.length; i++) {
+        for (uint256 i = 0; i < arrStudents.length; i++) {
             if (arrStudents[i] == students[_ra]) {
                 delete arrStudents[i];
             }
@@ -68,11 +70,19 @@ contract InteliFactory {
         delete students[_ra];
     }
 
-    function transferMoney(address payable _id, uint _amount) external isOwner payable {
+    function transferMoney(address payable _id, uint256 _amount)
+        external
+        payable
+        isOwner
+    {
         _id.transfer(_amount);
     }
-    
-    function getBalance() public isOwner view returns (uint) {
+
+    receive() external payable {
+        emit Received(msg.sender, msg.value);
+    }
+
+    function getBalance() public view isOwner returns (uint256) {
         return address(this).balance;
     }
 }

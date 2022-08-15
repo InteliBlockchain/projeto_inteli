@@ -25,8 +25,8 @@ class Student {
     async createStudent(ra) {
         const accounts = await web3.eth.getAccounts()
 
-            // confere se a carteira já existe
-        if (await this.getWallet(ra) !== '0x0000000000000000000000000000000000000000') {
+        // confere se a carteira já existe
+        if ((await this.getWallet(ra)) !== '0x0000000000000000000000000000000000000000') {
             throw new Error(`Carteira já existente para RA ${ra}`)
         }
 
@@ -54,7 +54,6 @@ class Student {
     }
 
     async checkIn(ra, time, date) {
-
         const accounts = await web3.eth.getAccounts()
         const wallet = await this.getWallet(ra)
 
@@ -120,19 +119,19 @@ class Student {
 
         if (wallets.length == 0) {
             return 'Nenhuma entrada registrada nesse dia'
-         }
+        }
 
-        let decodedStructs = wallets.map((object) => 
+        let decodedStructs = wallets.map((object) =>
             structDecoder.createObject('accessCampus', 'getCheckIns', [object[0], object[1]])
-       )
-      
-        for (let i = 0; i < decodedStructs.length;i++) {
+        )
+
+        for (let i = 0; i < decodedStructs.length; i++) {
             const ra = await inteliFactory.methods.getStudent(decodedStructs[i].userAddress).call({
                 from: accounts[0],
             })
             decodedStructs[i] = {
                 ra,
-                ...decodedStructs[i]
+                ...decodedStructs[i],
             }
             delete decodedStructs[i].userAddress
         }
@@ -147,20 +146,20 @@ class Student {
         })
 
         if (wallets.length == 0) {
-           return 'Nenhuma saída registrada nesse dia'
+            return 'Nenhuma saída registrada nesse dia'
         }
 
-        let decodedStructs = wallets.map((object) => 
+        let decodedStructs = wallets.map((object) =>
             structDecoder.createObject('accessCampus', 'getCheckOuts', [object[0], object[1]])
-       )
-      
-        for (let i = 0; i < decodedStructs.length;i++) {
+        )
+
+        for (let i = 0; i < decodedStructs.length; i++) {
             const ra = await inteliFactory.methods.getStudent(decodedStructs[i].userAddress).call({
                 from: accounts[0],
             })
             decodedStructs[i] = {
                 ra,
-                ...decodedStructs[i]
+                ...decodedStructs[i],
             }
             delete decodedStructs[i].userAddress
         }
@@ -171,7 +170,6 @@ class Student {
     async balance(ra) {
         const accounts = await web3.eth.getAccounts()
         const wallet = await this.getWallet(ra)
-       
 
         if (wallet == '0x0000000000000000000000000000000000000000') {
             throw new Error('Estudante não encontrado')
@@ -185,16 +183,17 @@ class Student {
     }
 
     async transferMoney(from, quantity, to) {
+        const accounts = await web3.eth.getAccounts()
         const sender = await this.getWallet(from)
 
         let receiver = null
-        if (to == "Inteli")  {
+        if (to == 'Inteli') {
             receiver = await this.getWallet(contractsAdresses.addresses.at(-1).InteliFactory)
         } else {
             receiver = await this.getWallet(to)
         }
 
-        await person(sender).methods.transferMoney(to, quantity).call({
+        await person(sender).methods.transferMoney(to, quantity).send({
             from: accounts[0],
         })
     }

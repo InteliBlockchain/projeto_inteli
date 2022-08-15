@@ -26,7 +26,7 @@ const getStudent = async (req, res) => {
         const ra = await Student.getStudent(wallet)
         res.send(ra)
     } catch (err) {
-        res.status(500).send()
+        res.status(500).send(err.message)
     }
 }
 
@@ -63,8 +63,7 @@ const getWallet = async (req, res) => {
         const wallet = await Student.getWallet(ra)
         res.send(wallet)
     } catch (err) {
-        console.log(err)
-        res.status(500).send()
+        res.status(500).send(err.message)
     }
 }
 
@@ -78,7 +77,7 @@ const deleteStudent = async (req, res) => {
         await Student.removeStudent(ra)
         res.send('Usuário removido com sucesso')
     } catch (err) {
-        res.status(500).send('Erro ao remover usuário')
+        res.status(500).send(err.message)
     }
 
     return Student

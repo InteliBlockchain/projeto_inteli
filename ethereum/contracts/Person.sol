@@ -15,6 +15,8 @@ Person contract: manage person profile and track activities
 contract Person is ERC1155Holder {
     address public owner;
 
+    event Received(address, uint256);
+
     modifier isOwner() {
         require(owner == msg.sender, "Not owner");
         _;
@@ -28,19 +30,23 @@ contract Person is ERC1155Holder {
         owner = _owner;
     }
 
-    function getBalance(
-	) public view returns(uint256){
-		return address(this).balance;
-	}
-    
-    function transferMoney(address payable _to, uint _value) external payable{
-       _to.transfer(_value);
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
     }
 
-    function registerCheckIn(string memory _date, uint64 _time)
-        public
+    function transferMoney(address payable _to, uint256 _value)
+        external
         isOwner
+        payable
     {
+        _to.transfer(_value);
+    }
+
+    receive() external payable {
+        emit Received(msg.sender, msg.value);
+    }
+
+    function registerCheckIn(string memory _date, uint64 _time) public isOwner {
         campusCheckIn[_date].push(_time);
     }
 

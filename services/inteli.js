@@ -4,6 +4,7 @@ const { instance: inteliFactory } = require('../ethereum/contractsInteractions/i
 
 class Inteli {
     async balance() {
+        const accounts = await web3.eth.getAccounts()
         const balance = await inteliFactory.methods.getBalance().call({
             from: accounts[0],
         })
@@ -12,13 +13,18 @@ class Inteli {
     }
 
     async rewardStudent(quantity, raStudent) {
+        const accounts = await web3.eth.getAccounts()
         const walletStudent = await inteliFactory.methods.getWallet(raStudent).call({
             from: accounts[0],
         })
 
-        const reward = await inteliFactory.methods.rewardStudent(quantity, walletStudent).call({
-            from: accounts[0],
-        })
+        if (walletStudent !== '0x0000000000000000000000000000000000000000') {
+            const reward = await inteliFactory.methods.transferMoney(walletStudent, quantity).send({
+                from: accounts[0],
+            })
+        }else {
+            throw new Error("Student does not exist")
+        }
     }
 }
 
