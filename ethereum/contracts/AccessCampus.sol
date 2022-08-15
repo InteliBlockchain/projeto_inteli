@@ -11,7 +11,7 @@ AccessCampus contract: consolidation of Person IDs checking in *OR* out in a giv
     . methods: create and retrieve events and register in state variable
 */
 contract AccessCampus {
-    address owner;
+    address public owner;
     struct Access {
         address userAddress;
         uint256 time;
@@ -19,6 +19,13 @@ contract AccessCampus {
 
     mapping(string => Access[]) checkIns;
     mapping(string => Access[]) checkOuts;
+
+    event getCheck(Access[]);
+
+    modifier isOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
 
     constructor() {
         owner = msg.sender;
@@ -28,8 +35,7 @@ contract AccessCampus {
         address _userAddress,
         uint256 _time,
         string memory _date
-    ) public {
-        require(msg.sender == owner);
+    ) public isOwner {
         Access memory checkIn = Access({
             userAddress: _userAddress,
             time: _time
@@ -41,8 +47,7 @@ contract AccessCampus {
         address _userAddress,
         uint256 _time,
         string memory _date
-    ) public {
-        require(msg.sender == owner);
+    ) public isOwner {
         Access memory checkOut = Access({
             userAddress: _userAddress,
             time: _time
@@ -52,19 +57,19 @@ contract AccessCampus {
 
     function getCheckIns(string memory _date)
         public
-        view
+        isOwner
         returns (Access[] memory)
     {
-        require(msg.sender == owner);
+        emit getCheck(checkIns[_date]);
         return checkIns[_date];
     }
 
     function getCheckOuts(string memory _date)
         public
-        view
+        isOwner
         returns (Access[] memory)
     {
-        require(msg.sender == owner);
+        emit getCheck(checkOuts[_date]);
         return checkOuts[_date];
     }
 }

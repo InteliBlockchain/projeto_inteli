@@ -9,6 +9,31 @@
       "type": "constructor"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "userAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "time",
+              "type": "uint256"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct AccessCampus.Access[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "getCheck",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "string",
@@ -36,7 +61,7 @@
           "type": "tuple[]"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -65,6 +90,19 @@
           "internalType": "struct AccessCampus.Access[]",
           "name": "",
           "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",

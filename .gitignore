@@ -1,3 +1,11 @@
+
+# Tmp
+tmp/
+
+.env
+
+/ethereum/artifacts/*
+
 # Logs
 logs
 *.log
@@ -104,8 +112,3 @@ dist
 
 # DS_Store
 */.DS_Store
-
-# Tmp
-tmp/
-
-.env

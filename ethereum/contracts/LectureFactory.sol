@@ -4,9 +4,16 @@ pragma solidity ^0.8.0;
 import "./Lecture.sol";
 
 contract LectureFactory {
-    address owner;
+    address public owner;
 
-    address[] public lectures;
+    event NewLecture(address);
+
+    address[] lectures;
+
+    modifier isOwner() {
+        require(owner == msg.sender, "Not owner");
+        _;
+    }
 
     constructor() {
         owner = msg.sender;
@@ -17,15 +24,15 @@ contract LectureFactory {
     function createLecture(
         address[] memory _arrayUsers,
         string memory _ipfsAddress
-    ) public {
-        require(msg.sender == owner);
+    ) public isOwner {
         Lecture mintLecture = new Lecture(_arrayUsers, _ipfsAddress, owner);
-        lectures.push(address(mintLecture));
+
         emit NewLecture(address(mintLecture));
+
+        lectures.push(address(mintLecture));
     }
 
-    function viewLectures() public view returns (address[] memory) {
-        require(msg.sender == owner);
+    function viewLectures() public view isOwner returns (address[] memory) {
         return (lectures);
     }
 }
