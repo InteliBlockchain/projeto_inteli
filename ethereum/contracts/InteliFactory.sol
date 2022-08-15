@@ -35,13 +35,13 @@ contract InteliFactory {
         arrStudents.push(address(person));
     }
 
-    function getWallet(string memory _id)
+    function getWallet(string memory _ra)
         public
         view
         isOwner
         returns (address)
     {
-        return students[_id];
+        return students[_ra];
     }
 
     function getStudent(address _id)
@@ -57,14 +57,24 @@ contract InteliFactory {
         return arrStudents;
     }
 
-    function removeStudent(string memory _id) public isOwner {
+    function removeStudent(string memory _ra) public isOwner {
         require(students[_id] != address(0), "Student does not exist");
         for (uint256 i = 0; i >= arrStudents.length; i++) {
-            if (arrStudents[i] == students[_id]) {
+            if (arrStudents[i] == students[_ra]) {
                 delete arrStudents[i];
             }
         }
-        delete wallets[students[_id]];
-        delete students[_id];
+        delete wallets[students[_ra]];
+        delete students[_ra];
+    }
+
+    function transferMoney(address payable _id, uint _amount) external payable {
+        require(owner == msg.sender);
+        _id.transfer(_amount);
+    }
+    
+    function getBalance() public view returns (uint) {
+        require(owner == msg.sender);
+        return address(this).balance;
     }
 }

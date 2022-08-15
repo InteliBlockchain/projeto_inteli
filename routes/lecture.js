@@ -4,16 +4,21 @@ const { body, validationResult } = require("express-validator");
 
 //Importações necessárias
 const lectureController = require("../controllers/lecture");
-const studentAuth = require("../Middlewares/unsureAuthenticated");
+const studentAuth = require("../middlewares/unsureAuthenticated");
 
+const multer = require('multer')
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
 //ROTAS com seus respectivos controllers e middlewares
 
 //Criar registro de palestra e todos os alunos que participaram
 router.post(
-  "/",
-  [body("lectureName", "Nome da palestra é necessário").exists({ checkFalsy: true })],
-  [body("ras", "RA's é necessário").exists({ checkFalsy: true })],
+  "/create",
+  // [body("lectureName", "Nome da palestra é necessário").exists({ checkFalsy: true })],
+  // [body("ras", "RA's é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
+  upload.single('file'),
   lectureController.createLecture
 );
 
@@ -26,7 +31,7 @@ router.get(
 
 //Ver todas as palestras que aconteceram no Inteli
 router.get(
-  "/lectures",
+  "/",
   studentAuth.unsureAuthenticated,
   lectureController.getLectures
 );

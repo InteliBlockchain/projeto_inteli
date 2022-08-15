@@ -28,14 +28,23 @@ contract Person is ERC1155Holder {
         owner = _owner;
     }
 
-    function registerCheckIn(string memory _date, uint64 _unixTime)
+    function getBalance(
+	) public view returns(uint256){
+		return address(this).balance;
+	}
+    
+    function transferMoney(address payable _to, uint _value) external payable{
+       _to.transfer(_value);
+    }
+
+    function registerCheckIn(string memory _date, uint _time)
         public
         isOwner
     {
-        campusCheckIn[_date].push(_unixTime);
+        campusCheckIn[_date].push(_time);
     }
 
-    function getCheckIn(string memory _id)
+    function getCheckIn(string memory _date)
         public
         view
         isOwner
@@ -51,7 +60,7 @@ contract Person is ERC1155Holder {
         campusCheckOut[_date].push(_unixTime);
     }
 
-    function getCheckOut(string memory _id)
+    function getCheckOut(string memory _date)
         public
         view
         isOwner

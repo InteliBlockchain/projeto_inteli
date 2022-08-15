@@ -1,3 +1,11 @@
+
+# Tmp
+tmp/
+
+.env
+
+/ethereum/artifacts/*
+
 # Logs
 logs
 *.log

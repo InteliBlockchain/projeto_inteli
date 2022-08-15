@@ -19,6 +19,8 @@ contract LectureFactory {
         owner = msg.sender;
     }
 
+    event NewLecture(address);
+
     function createLecture(
         address[] memory _arrayUsers,
         string memory _ipfsAddress

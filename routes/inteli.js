@@ -4,7 +4,7 @@ const { body, validationResult } = require("express-validator");
 
 //Importações necessárias
 const studentController = require("../controllers/inteli");
-const studentAuth = require("../Middlewares/unsureAuthenticated");
+const studentAuth = require("../middlewares/unsureAuthenticated");
 
 //ROTAS com seus respectivos controllers e middlewares
 
