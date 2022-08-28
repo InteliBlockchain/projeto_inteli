@@ -5,20 +5,10 @@ const { instance: inteliFactory } = require('../ethereum/contractsInteractions/i
 const { instance: person } = require('../ethereum/contractsInteractions/person')
 const { instance: lecture } = require('../ethereum/contractsInteractions/lecture')
 
-const { createHash, randomBytes } = require('crypto')
-const { promisify } = require('util')
-const randomBytesAsync = promisify(randomBytes)
+const { createHash } = require('crypto')
 
 const { connectToDatabase } = require('../database')
 const { storeNFT } = require('../ethereum/apis/nftStorage')
-const fs = require('fs').promises
-
-//database infos:
-//table: "lecture" -> id(PK), name, nameHash
-
-function getKey(size) {
-    return randomBytesAsync(size)
-}
 
 class Lecture {
     async createLecture(file, lectureName, ras, description) {
@@ -58,22 +48,9 @@ class Lecture {
         // Fechar o banco de dados
         await db.close()
 
-        // Gerar Hash aleatória
-        const hash = await getKey(16)
-
-        // Criar nome de arquivo que não se repete
-        const fileName = `${hash.toString('hex')}-${file.originalname}`
-        const filePath = __dirname + '/../tmp/' + fileName
-
-        // Armazenar arquivo na pasta tmp
-        await fs.writeFile(filePath, file.buffer)
-
         // Criar nova NFT no NFT Storage (devolve url)
-        const result = await storeNFT(filePath, nameHash, description)
+        const result = await storeNFT(file, nameHash, description)
         const parsedResult = JSON.parse(JSON.stringify(result))
-
-        // Deletar o arquivo criado
-        await fs.unlink(filePath)
 
         // Get da url e executa função createLecture do contrato LectureFactory
         const newLectureAddress = JSON.parse(
@@ -116,9 +93,15 @@ class Lecture {
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
             const response = await fetch(formatedIpfsLink)
             const metadata = await response.json()
-            const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
-            metadata.name = lectureFromDb.name
-            lecturesMetadata.push(metadata)
+            
+            if (metadata) {
+                const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
+
+                if (lectureFromDb) {
+                    metadata.name = lectureFromDb.name
+                    lecturesMetadata.push(metadata)
+                }
+            }
         }
 
         // Fechar o banco de dados
@@ -141,19 +124,25 @@ class Lecture {
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
             const response = await fetch(formatedIpfsLink)
             const metadata = await response.json()
-            const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
-            metadata.name = lectureFromDb.name
-            lecturesMetadata.push(metadata)
 
-            const lecturePeople = await lecture(lectures[i]).methods.returnPeople().call({ from: accounts[0] })
+            if (metadata) {
+                const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
 
-            const studentRas = []
+                if (lectureFromDb) {
+                    metadata.name = lectureFromDb.name
+                    lecturesMetadata.push(metadata)
 
-            for (let y = 0; y < lecturePeople.length; y++) {
-                const ra = await inteliFactory.methods.getStudent(lecturePeople[y]).call({ from: accounts[0] })
-                studentRas.push(ra)
+                    const lecturePeople = await lecture(lectures[i]).methods.returnPeople().call({ from: accounts[0] })
+
+                    const studentRas = []
+
+                    for (let y = 0; y < lecturePeople.length; y++) {
+                        const ra = await inteliFactory.methods.getStudent(lecturePeople[y]).call({ from: accounts[0] })
+                        studentRas.push(ra)
+                    }
+                    metadata.students = studentRas
+                }
             }
-            metadata.students = studentRas
         }
 
         // Fechar o banco de dados
