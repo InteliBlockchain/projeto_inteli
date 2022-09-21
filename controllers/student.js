@@ -151,7 +151,7 @@ const accesses = async (req, res) => {
 
         res.send(times)
     } catch (err) {
-        res.status(500).send('Erro ao buscar as entradas')
+        res.status(500).send(err.message)
     }
 
     return Student
