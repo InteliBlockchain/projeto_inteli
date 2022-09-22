@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 
 // Importações necessárias
 const studentController = require("../controllers/student");
+const date = require("../middlewares/dateValidation");
 const studentAuth = require("../middlewares/unsureAuthenticated");
 
 // ROTAS com seus respectivos controllers e middlewares
@@ -44,6 +45,7 @@ router.post(
   "/checkIn",
   [body("ra", "RA é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
+  date.dateValidation,
   studentController.checkIn
 );
 
@@ -52,6 +54,7 @@ router.post(
   "/checkOut",
   [body("ra", "RA é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
+  date.dateValidation,
   studentController.checkOut
 );
 
@@ -61,6 +64,7 @@ router.post(
   [body("ra", "RA é necessário").exists({ checkFalsy: true })],
   [body("date", "Data é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
+  date.dateValidation,
   studentController.accesses
 );
 
@@ -70,6 +74,7 @@ router.post(
   [body("ra", "RA é necessário").exists({ checkFalsy: true })],
   [body("date", "Data é necessário").exists({ checkFalsy: true })],
   studentAuth.unsureAuthenticated,
+  date.dateValidation,
   studentController.exits
 );
 
@@ -77,6 +82,7 @@ router.post(
 router.get(
   "/allAccesses/:date",
   studentAuth.unsureAuthenticated,
+  date.dateValidationParams,
   studentController.allAccesses
 );
 
@@ -84,6 +90,7 @@ router.get(
 router.get(
   "/allExits/:date",
   studentAuth.unsureAuthenticated,
+  date.dateValidationParams,
   studentController.allExits
 );
 
