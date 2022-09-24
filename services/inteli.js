@@ -1,29 +1,28 @@
-const { web3 } = require('../ethereum/utils/web3')
-//compiled smart contract
-const { instance: inteliFactory } = require('../ethereum/contractsInteractions/inteliFactory')
+const { ethers } = require('ethers')
+
+const { inteliFactory } = require('../utils/ethers')
+const { walletDoesNotExistsValidation } = require('../utils/validation')
+const { blockchainConnection } = require('../utils/ethers')
 
 class Inteli {
     async balance() {
-        const accounts = await web3.eth.getAccounts()
-        const balance = await inteliFactory.methods.getBalance().call({
-            from: accounts[0],
-        })
-
-        return balance
+        const { provider } = await blockchainConnection()
+        const balance = await provider.getBalance(process.env.BLOCKCHAIN_ACCOUNT_ADDRESS)
+        const formatedBalance = ethers.utils.formatEther(balance)
+        return formatedBalance
     }
 
     async rewardStudent(quantity, raStudent) {
-        const accounts = await web3.eth.getAccounts()
-        const walletStudent = await inteliFactory.methods.getWallet(raStudent).call({
-            from: accounts[0],
-        })
+        const { signer } = await blockchainConnection()
 
-        if (walletStudent == '0x0000000000000000000000000000000000000000') {
-            throw new Error('Student does not exist')
-        }
+        const inteliFactoryInstance = await inteliFactory()
 
-        await inteliFactory.methods.transferMoney(walletStudent, quantity).send({
-            from: accounts[0],
+        const wallet = inteliFactoryInstance.getWallet(raStudent)
+        walletDoesNotExistsValidation(wallet)
+
+        await signer.sendTransaction({
+            to: wallet,
+            value: ethers.utils.parseEther(quantity),
         })
     }
 }
