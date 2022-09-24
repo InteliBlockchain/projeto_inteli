@@ -7,7 +7,14 @@ const structDecoder = require('../ethereum/utils/structDecoder')
 const contractsAdresses = require('../contractsAddresses.json')
 
 //Import das novas instancias
-const { inteliFactory, accessCampus, person, lecture, lectureFactory } = require('../utils/ethers')
+const {
+    inteliFactory,
+    accessCampus,
+    person,
+    lecture,
+    lectureFactory,
+    blockchainConnection,
+} = require('../utils/ethers')
 
 // Import novas validacoes
 const { walletDoesNotExistsValidation, studentDoesNotExistsValidation } = require('../utils/validation')
@@ -50,35 +57,32 @@ class Student {
         const wallet = this.getWallet(ra)
         const accessCampusInstance = await accessCampus()
         await accessCampusInstance.registerCheckIn(wallet, time, date)
-
     }
 
     async checkOut(ra, time, date) {
         const personInstance = await person(ra)
         await personInstance.registerCheckOut(date, time)
 
-        
         const wallet = this.getWallet(ra)
         const accessCampusInstance = await accessCampus()
         await accessCampusInstance.registerCheckOut(wallet, time, date)
-        
     }
 
     async accesses(ra, date) {
         const personInstance = await person(ra)
         const accesses = await personInstance.getCheckIn(date)
-        const formatedAccesses = accesses.map(bigNumber => ethers.BigNumber.from(bigNumber).toNumber())
+        const formatedAccesses = accesses.map((bigNumber) => ethers.BigNumber.from(bigNumber).toNumber())
         return formatedAccesses
     }
 
     async exits(ra, date) {
         const personInstance = await person(ra)
         const exits = await personInstance.getCheckOut(date)
-        const formatedExits = exits.map(bigNumber => ethers.BigNumber.from(bigNumber).toNumber())
+        const formatedExits = exits.map((bigNumber) => ethers.BigNumber.from(bigNumber).toNumber())
 
         return formatedExits
     }
-    
+
     async allAccesses(date) {
         const accessCampusInstance = await accessCampus()
         const inteliFactoryInstance = await inteliFactory()
@@ -132,10 +136,13 @@ class Student {
     }
 
     async balance(ra) {
-        const personInstance = await person(ra)
-        const balance = await personInstance.getBalance()
-
-        return balance
+        const instance = await inteliFactory()
+        const wallet = await instance.getWallet(ra)
+        walletDoesNotExistsValidation(wallet)
+        const { provider } = await blockchainConnection()
+        const bigNumberBalance = await provider.getBalance(wallet)
+        const formatedBalance = ethers.BigNumber.from(bigNumberBalance.toString())
+        return ethers.utils.formatEther(formatedBalance.toString())
     }
 
     async transferMoney(from, quantity, to) {
@@ -150,7 +157,7 @@ class Student {
             toWallet = await this.getWallet(to)
             walletDoesNotExistsValidation(toWallet)
         }
-        
+
         if (quantity === '0') {
             throw new Error('Quantidade inválida para transferência')
         }

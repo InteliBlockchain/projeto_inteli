@@ -17,12 +17,13 @@ class Inteli {
 
         const inteliFactoryInstance = await inteliFactory()
 
-        const wallet = inteliFactoryInstance.getWallet(raStudent)
+        const wallet = await inteliFactoryInstance.getWallet(raStudent)
         walletDoesNotExistsValidation(wallet)
-
+       
         await signer.sendTransaction({
             to: wallet,
             value: ethers.utils.parseEther(quantity),
+            gasLimit: 50000,
         })
     }
 }
