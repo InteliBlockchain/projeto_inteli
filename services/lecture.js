@@ -1,8 +1,5 @@
-const {
-    lectureFactory,
-    person,
-    lecture,
-} = require('../utils/ethers')
+const axios = require('axios')
+const { lectureFactory, person, lecture, inteliFactory, blockchainConnection } = require('../utils/ethers')
 
 const { createHash } = require('crypto')
 
@@ -52,16 +49,16 @@ class Lecture {
         const parsedResult = JSON.parse(JSON.stringify(result))
 
         // Get da url e executa função createLecture do contrato LectureFactory
-        const newLectureAddress = JSON.parse(
-            JSON.stringify(
-                await lectureFactoryInstance.createLecture(wallets, parsedResult.url).events.NewLecture.returnValues
-            )
-        )[0]
+        const newLecture = await lectureFactoryInstance.createLecture(wallets, parsedResult.url)
+        const confirmedNewLecture = await newLecture.wait()
+
+        const event = confirmedNewLecture.events.find((event) => event.event == 'NewLecture')
+        const [address] = event.args
 
         // Executa a função newActivity do contrato Person para cada usuário que foi na palestra
         for (let i = 0; i < ras.length; i++) {
             const personInstance = await person(ras[i])
-            await personInstance.newActivity('lecture', newLectureAddress)
+            await personInstance.newActivity('lecture', address)
         }
     }
 
@@ -87,9 +84,8 @@ class Lecture {
             const lectureInstance = await lecture(lecturesAdresses[i])
             const ipfsLink = await lectureInstance.uri(0)
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
-            const response = await fetch(formatedIpfsLink)
-            const metadata = await response.json()
-            
+            const { data: metadata } = await axios.get(formatedIpfsLink)
+
             if (metadata) {
                 const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
 
@@ -118,8 +114,7 @@ class Lecture {
             const lectureInstance = await lecture(lectures[i])
             const ipfsLink = await lectureInstance.uri(0)
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
-            const response = await fetch(formatedIpfsLink)
-            const metadata = await response.json()
+            const { data: metadata } = await axios.get(formatedIpfsLink)
 
             if (metadata) {
                 const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
@@ -128,11 +123,11 @@ class Lecture {
                     metadata.name = lectureFromDb.name
                     lecturesMetadata.push(metadata)
 
-                    const lecturePeople = await lecture(lectures[i]).methods.returnPeople().call({ from: accounts[0] })
-
+                    const lecturePeople = await lectureInstance.returnPeople()
                     const studentRas = []
 
                     for (let y = 0; y < lecturePeople.length; y++) {
+                        const inteliFactoryInstance = await inteliFactory()
                         const ra = await inteliFactoryInstance.getStudent(lecturePeople[y])
                         studentRas.push(ra)
                     }

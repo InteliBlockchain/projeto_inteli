@@ -9,7 +9,7 @@ const { abi: personAbi } = require('../build/contracts/Person.json')
 
 const { addresses } = require('../contractsAddresses.json')
 
-const  blockchainConnection = async () => {
+const blockchainConnection = async () => {
     const provider = new ethers.providers.JsonRpcProvider(process.env.BLOCKCHAIN_URL, parseInt(process.env.BLOCKCHAIN_CHAIN_ID))
     const signer = provider.getSigner(process.env.BLOCKCHAIN_ACCOUNT_ADDRESS)
     await signer.unlock(process.env.BLOCKCHAIN_ACCOUNT_PASSWORD)
