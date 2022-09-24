@@ -73,8 +73,9 @@ module.exports = {
             host: 'localhost', //our network is running on localhost
             port: 8543, // port where your blockchain is running
             network_id: '*',
-            from: "0x486a56cf5f02b16b4aa2fd0a0c42b45dadb86b08", // use the account-id generated during the setup process
+            from: process.env.BLOCKCHAIN_ACCOUNT_ADDRESS, // use the account-id generated during the setup process
             gas: 20000000,
+            gasPrice: 8000000000,
         },
         //
         // An additional network, but with some advanced options…
