@@ -4,17 +4,16 @@ const { inteliFactory } = require('../utils/ethers')
 const { walletDoesNotExistsValidation } = require('../utils/validation')
 const { blockchainConnection } = require('../utils/ethers')
 
-
 class Inteli {
     async balance() {
-        const { provider } = blockchainConnection()
+        const { provider } = await blockchainConnection()
         const balance = await provider.getBalance(process.env.BLOCKCHAIN_ACCOUNT_ADDRESS)
         const formatedBalance = ethers.utils.formatEther(balance)
         return formatedBalance
     }
 
     async rewardStudent(quantity, raStudent) {
-        const {  signer } = blockchainConnection()
+        const { signer } = await blockchainConnection()
 
         const inteliFactoryInstance = await inteliFactory()
 
@@ -23,8 +22,8 @@ class Inteli {
 
         await signer.sendTransaction({
             to: wallet,
-            value: ethers.utils.parseEther(quantity)
-        }); 
+            value: ethers.utils.parseEther(quantity),
+        })
     }
 }
 

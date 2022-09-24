@@ -9,9 +9,10 @@ const { abi: personAbi } = require('../build/contracts/Person.json')
 
 const { addresses } = require('../contractsAddresses.json')
 
-const blockchainConnection = () => {
+const  blockchainConnection = async () => {
     const provider = new ethers.providers.JsonRpcProvider(process.env.BLOCKCHAIN_URL, parseInt(process.env.BLOCKCHAIN_CHAIN_ID))
     const signer = provider.getSigner(process.env.BLOCKCHAIN_ACCOUNT_ADDRESS)
+    await signer.unlock(process.env.BLOCKCHAIN_ACCOUNT_PASSWORD)
 
     return {
         provider,
@@ -20,7 +21,7 @@ const blockchainConnection = () => {
 }
 
 const inteliFactory = async () => {
-    const { provider, signer } = blockchainConnection()
+    const { provider, signer } = await blockchainConnection()
     const inteliFactory = new ethers.Contract(addresses.at(-1).InteliFactory, inteliFactoryAbi, provider)
     const inteliFactoryInstance = inteliFactory.connect(signer)
 
@@ -28,7 +29,7 @@ const inteliFactory = async () => {
 }
 
 const lectureFactory = async () => {
-    const { provider, signer } = blockchainConnection()
+    const { provider, signer } = await blockchainConnection()
 
     const lectureFactory = new ethers.Contract(addresses.at(-1).LectureFactory, lectureFactoryAbi, provider)
     const lectureFactoryInstance = lectureFactory.connect(signer)
@@ -37,7 +38,7 @@ const lectureFactory = async () => {
 }
 
 const accessCampus = async () => {
-    const { provider, signer } = blockchainConnection()
+    const { provider, signer } = await blockchainConnection()
 
     const accessCampus = new ethers.Contract(addresses.at(-1).AccessCampus, accessCampusAbi, provider)
     const accessCampusInstance = accessCampus.connect(signer)
@@ -51,7 +52,7 @@ const person = async (ra) => {
     
     walletDoesNotExistsValidation(personAddress)
 
-    const { provider, signer } = blockchainConnection()
+    const { provider, signer } = await blockchainConnection()
 
     const person = new ethers.Contract(personAddress, personAbi, provider)
     const personInstance = person.connect(signer)
@@ -60,7 +61,7 @@ const person = async (ra) => {
 }
 
 const lecture = async (addrs) => {
-    const { provider, signer } = blockchainConnection()
+    const { provider, signer } = await blockchainConnection()
 
     const lecture = new ethers.Contract(addrs, lectureAbi, provider)
     const lectureInstance = lecture.connect(signer)
