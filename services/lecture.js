@@ -1,17 +1,8 @@
-<<<<<<< Updated upstream
 const {
     lectureFactory,
     person,
     lecture,
 } = require('../utils/ethers')
-=======
-const { web3 } = require('../ethereum/utils/web3')
-// Compiled smart contract
-const { instance: lectureFactory } = require('../ethereum/contractsInteractions/lectureFactory')
-const { instance: inteliFactory } = require('../ethereum/contractsInteractions/inteliFactory')
-const { instance: person } = require('../ethereum/contractsInteractions/person')
-const { instance: lecture } = require('../ethereum/contractsInteractions/lecture')
->>>>>>> Stashed changes
 
 const { createHash } = require('crypto')
 
@@ -20,16 +11,9 @@ const { storeNFT } = require('../ethereum/apis/nftStorage')
 
 class Lecture {
     async createLecture(file, lectureName, ras, description) {
-<<<<<<< Updated upstream
         const inteliFactoryInstance = await inteliFactory()
         const lectureFactoryInstance = await lectureFactory()
 
-=======
-        // Get the Inteli wallet
-        const accounts = await web3.eth.getAccounts()
-
-        // Get of all wallets from the RAs Array
->>>>>>> Stashed changes
         const wallets = []
         const rasWithoutWallet = []
 
@@ -37,58 +21,51 @@ class Lecture {
             // Get de todas as wallets a partir do Array da Ras
             const wallet = await inteliFactoryInstance.getWallet(ras[i])
 
-            // Check if the wallet exists
+            // Checar se a wallet existe
             if (wallet != '0x0000000000000000000000000000000000000000') {
-                // Add the wallet to the array
+                // Adicionar a wallet ao array
                 wallets.push(wallet)
             } else {
                 rasWithoutWallet.push(ras[i])
             }
         }
-        // If any of the RAs doesn't match a wallet
+        // caso algum dos RAs passados não corresponda a uma carteira:
         if (rasWithoutWallet.length > 0) {
             const formatedRasWithoutWallet = rasWithoutWallet.join(', ')
             throw new Error("Erro! Não encontradas carteiras para os seguintes R.A's: " + formatedRasWithoutWallet)
         }
 
-        // Connect to Database
+        // Conectar ao banco de dados
         const db = await connectToDatabase()
 
-        // Hash lecture name
+        // Hashear lecture name
         const nameHash = createHash('sha256').update(lectureName).digest('hex')
 
-        // Store in Database
+        // Armazenar no banco de dados
         await db.run(`INSERT INTO lecture (name, nameHash) VALUES ('${lectureName}', '${nameHash}')`)
 
-        // Close the Database
+        // Fechar o banco de dados
         await db.close()
 
-        // Create a new NFT on NFT Storage (return url)
+        // Criar nova NFT no NFT Storage (devolve url)
         const result = await storeNFT(file, nameHash, description)
         const parsedResult = JSON.parse(JSON.stringify(result))
 
-        // Get from the url and execute the createLecture function of the LectureFactory contract
+        // Get da url e executa função createLecture do contrato LectureFactory
         const newLectureAddress = JSON.parse(
             JSON.stringify(
                 await lectureFactoryInstance.createLecture(wallets, parsedResult.url).events.NewLecture.returnValues
             )
         )[0]
 
-<<<<<<< Updated upstream
         // Executa a função newActivity do contrato Person para cada usuário que foi na palestra
         for (let i = 0; i < ras.length; i++) {
             const personInstance = await person(ras[i])
             await personInstance.newActivity('lecture', newLectureAddress)
-=======
-        // Execute the newActivity function of the Person contract for each user that went to the event
-        for (let i = 0; i < wallets.length; i++) {
-            await person(wallets[i]).methods.newActivity('lecture', newLectureAddress).send({ from: accounts[0] })
->>>>>>> Stashed changes
         }
     }
 
     async getLecturesStudent(ra) {
-<<<<<<< Updated upstream
         const inteliFactoryInstance = await inteliFactory()
         const personInstance = await person(ra)
         // Conectar ao banco de dados
@@ -96,31 +73,13 @@ class Lecture {
 
         // Executa a função getWallet do contrato inteliFactory
         const wallet = await inteliFactoryInstance.getWallet(ra)
-=======
-        const accounts = await web3.eth.getAccounts()
-
-        // Connect to the Database
-        const db = await connectToDatabase()
-
-        // Execute the getWallet function of the contract inteliFactory
-        const wallet = await inteliFactory.methods.getWallet(ra).call({
-            from: accounts[0],
-        })
->>>>>>> Stashed changes
 
         if (wallet == '0x0000000000000000000000000000000000000000') {
             throw new Error('Wallet não encontrada para esse RA')
         }
 
-<<<<<<< Updated upstream
         // Executa a função getActivities do contrato Person
         const lecturesAdresses = await personInstance.getActivities('lecture')
-=======
-        // Execute the getActivities function of the Person contract
-        const lecturesAdresses = await person(wallet).methods.getActivities('lecture').call({
-            from: accounts[0],
-        })
->>>>>>> Stashed changes
 
         const lecturesMetadata = []
 
@@ -141,19 +100,15 @@ class Lecture {
             }
         }
 
-        // Close the Database
+        // Fechar o banco de dados
         await db.close()
 
         return lecturesMetadata
     }
 
     async getLectures() {
-<<<<<<< Updated upstream
         const lectureFactoryInstance = await lectureFactory()
         // Conectar ao banco de dados
-=======
-        // Connect to Database
->>>>>>> Stashed changes
         const db = await connectToDatabase()
 
         const lectures = await lectureFactoryInstance.viewLectures()
@@ -186,7 +141,7 @@ class Lecture {
             }
         }
 
-        // Close the Database
+        // Fechar o banco de dados
         await db.close()
 
         return lecturesMetadata
