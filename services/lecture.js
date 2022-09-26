@@ -1,4 +1,5 @@
 const axios = require('axios')
+// Compiled smart contracts
 const { lectureFactory, person, lecture, inteliFactory, blockchainConnection } = require('../utils/ethers')
 
 const { createHash } = require('crypto')
@@ -7,7 +8,9 @@ const { connectToDatabase } = require('../database')
 const { storeNFT } = require('../ethereum/apis/nftStorage')
 
 class Lecture {
+    // Create a new lecture giving it a name and description
     async createLecture(file, lectureName, ras, description) {
+        // Instance contracts
         const inteliFactoryInstance = await inteliFactory()
         const lectureFactoryInstance = await lectureFactory()
 
@@ -15,77 +18,85 @@ class Lecture {
         const rasWithoutWallet = []
 
         for (let i = 0; i < ras.length; i++) {
-            // Get de todas as wallets a partir do Array da Ras
+            // Get all wallets from the RAs Array
             const wallet = await inteliFactoryInstance.getWallet(ras[i])
 
-            // Checar se a wallet existe
+            // Check if the wallet exists
             if (wallet != '0x0000000000000000000000000000000000000000') {
-                // Adicionar a wallet ao array
+                // Add the wallet to wallet array
                 wallets.push(wallet)
             } else {
                 rasWithoutWallet.push(ras[i])
             }
         }
-        // caso algum dos RAs passados não corresponda a uma carteira:
+        // If any of the RAs doesn't match a wallet
         if (rasWithoutWallet.length > 0) {
             const formatedRasWithoutWallet = rasWithoutWallet.join(', ')
             throw new Error("Erro! Não encontradas carteiras para os seguintes R.A's: " + formatedRasWithoutWallet)
         }
 
-        // Conectar ao banco de dados
+        // Connect to Database
         const db = await connectToDatabase()
 
-        // Hashear lecture name
+        // Hash lecture name
         const nameHash = createHash('sha256').update(lectureName).digest('hex')
 
-        // Armazenar no banco de dados
+        // Store in Database
         await db.run(`INSERT INTO lecture (name, nameHash) VALUES ('${lectureName}', '${nameHash}')`)
 
-        // Fechar o banco de dados
+        // Close the Database
         await db.close()
 
-        // Criar nova NFT no NFT Storage (devolve url)
+        // Create a new NFT on NFT Storage (return url)
         const result = await storeNFT(file, nameHash, description)
         const parsedResult = JSON.parse(JSON.stringify(result))
 
-        // Get da url e executa função createLecture do contrato LectureFactory
+        // Get from the url and execute the createLecture function of the LectureFactory contract
         const newLecture = await lectureFactoryInstance.createLecture(wallets, parsedResult.url)
         const confirmedNewLecture = await newLecture.wait()
 
         const event = confirmedNewLecture.events.find((event) => event.event == 'NewLecture')
         const [address] = event.args
 
-        // Executa a função newActivity do contrato Person para cada usuário que foi na palestra
+        // Execute the newActivity function of the Person contract for each user that went to the event
         for (let i = 0; i < ras.length; i++) {
             const personInstance = await person(ras[i])
             await personInstance.newActivity('lecture', address)
         }
     }
 
+    // Get lectures from a student by RA
     async getLecturesStudent(ra) {
+        //Instance contract
         const inteliFactoryInstance = await inteliFactory()
         const personInstance = await person(ra)
-        // Conectar ao banco de dados
+
+        // Connect to the Database
         const db = await connectToDatabase()
 
-        // Executa a função getWallet do contrato inteliFactory
+        // Execute the getWallet function of the contract inteliFactory
         const wallet = await inteliFactoryInstance.getWallet(ra)
 
+        // Check if the wallet exists
         if (wallet == '0x0000000000000000000000000000000000000000') {
             throw new Error('Wallet não encontrada para esse RA')
         }
 
-        // Executa a função getActivities do contrato Person
+        // Execute the getActivities function of the Person contract
         const lecturesAdresses = await personInstance.getActivities('lecture')
 
         const lecturesMetadata = []
 
         for (let i = 0; i < lecturesAdresses.length; i++) {
+            // Get the lecture adress and connect to a ipfs link
             const lectureInstance = await lecture(lecturesAdresses[i])
             const ipfsLink = await lectureInstance.uri(0)
+
+            // Format the ipfs link
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
             const { data: metadata } = await axios.get(formatedIpfsLink)
 
+            // Check if the metadata is true and get lecture from database
             if (metadata) {
                 const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
 
@@ -96,26 +107,33 @@ class Lecture {
             }
         }
 
-        // Fechar o banco de dados
+        // Close the Database
         await db.close()
 
         return lecturesMetadata
     }
 
+    // Get all the lectures
     async getLectures() {
+        // Instance contract
         const lectureFactoryInstance = await lectureFactory()
-        // Conectar ao banco de dados
+
+        // Connect to Database
         const db = await connectToDatabase()
 
         const lectures = await lectureFactoryInstance.viewLectures()
         const lecturesMetadata = []
 
         for (let i = 0; i < lectures.length; i++) {
+            // Get the lecture adress and connect to a ipfs link
             const lectureInstance = await lecture(lectures[i])
             const ipfsLink = await lectureInstance.uri(0)
+
+            // Format the ipfs link
             const formatedIpfsLink = 'https://ipfs.io/ipfs/' + ipfsLink.slice(7)
             const { data: metadata } = await axios.get(formatedIpfsLink)
 
+            // Check if the metadata is true and get lecture from database
             if (metadata) {
                 const lectureFromDb = await db.get(`SELECT * FROM lecture WHERE nameHash='${metadata.name}'`)
 
@@ -136,7 +154,7 @@ class Lecture {
             }
         }
 
-        // Fechar o banco de dados
+        // Close the Database
         await db.close()
 
         return lecturesMetadata
