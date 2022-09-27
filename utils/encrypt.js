@@ -6,12 +6,12 @@ const encryptLecture = (name) => {
     return { hashedName }
 }
 
-const desencryptLecture = (encryptedLecture) => {
+const decodeLecture = (encryptedLecture) => {
     const decoded = jwt.verify(encryptedLecture, process.env.JWT_ENCRYPT_KEY)
     return {name: decoded.name}
 }
 
 module.exports = {
     encryptLecture,
-    desencryptLecture,
+    decodeLecture,
 }

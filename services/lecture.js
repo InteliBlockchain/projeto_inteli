@@ -3,7 +3,7 @@ const axios = require('axios')
 const { lectureFactory, inteliFactory } = require('../utils/ethers')
 
 const { storeNFT } = require('../ethereum/apis/nftStorage')
-const { encryptLecture, desencryptLecture } = require('../utils/encrypt')
+const { encryptLecture, decodeLecture } = require('../utils/encrypt')
 
 class Lecture {
     async createLecture(file, lectureName, ras, description) {
@@ -67,7 +67,7 @@ class Lecture {
                 'https://ipfs.io/ipfs/' + uri.slice(7)
                 const response = await fetch(formatedIpfsLink)
                 const NFTMetaDado = await response.json()
-                const decodedName = desencryptLecture(NFTMetaDado.name)
+                const decodedName = decodeLecture(NFTMetaDado.name)
                 lectures.push({
                     lectureName: decodedName,
                     lectureId: i
@@ -99,9 +99,9 @@ class Lecture {
         let arrayAddress = []
 
         const lectureFactoryInstance = await lectureFactory()
-        const currentNFTid = await lectureFactoryInstance.idCount()
+        const currentNFTid = await lectureFactoryInstance._tokenIds()
 
-        for (let i = 1; i <= currentNFTid; i++) {
+        for (let i = 0; i < currentNFTid; i++) {
             arrayIds.push(i)
         }
 
