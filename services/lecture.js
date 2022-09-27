@@ -3,7 +3,7 @@ const axios = require('axios')
 const { lectureFactory, inteliFactory } = require('../utils/ethers')
 
 const { storeNFT } = require('../ethereum/apis/nftStorage')
-const { encryptLecture } = require('../utils/encrypt')
+const { encryptLecture, decodeLecture } = require('../utils/encrypt')
 
 class Lecture {
     async createLecture(file, lectureName, ras, description) {
@@ -53,13 +53,43 @@ class Lecture {
 
     // Get all the lectures
     async getLectures() {
-        //Código Aqui
+        const lectureFactoryInstance = await lectureFactory()
+        const currentId = await lectureFactoryInstance._tokenIds()
+        let lectures = []
+
+        for (let i = 0; i < currentId ; i++) {
+            const uri = await lectureFactoryInstance.uri(i)
+            if (uri === "") {
+                throw new Error(`Nenhuma uri para o id ${i}`)
+            }
+            else {
+                const formatedIpfsLink =
+                'https://ipfs.io/ipfs/' + uri.slice(7)
+                const response = await fetch(formatedIpfsLink)
+                const NFTMetaDado = await response.json()
+                const decodedName = decodeLecture(NFTMetaDado.name)
+                lectures.push({
+                    lectureName: decodedName,
+                    lectureId: i
+                })
+            }
+        }
+
+        return lectures
+
     }
 
     async getLectureRas(NFTid) {
         const lectureFactoryInstance = await lectureFactory()
+        const inteliFactoryInstance = await inteliFactory()
 
-        const ras = await lectureFactoryInstance.viewLectureOwners(NFTid)
+        const wallets = await lectureFactoryInstance.owners(NFTid)
+        let ras = []
+
+        for (let i = 0; i < ras.length; i++) {
+            const ra = await inteliFactoryInstance.getStudent(wallets[i])
+            ras.push(ra)
+        }
 
         return ras
     }
@@ -69,9 +99,9 @@ class Lecture {
         let arrayAddress = []
 
         const lectureFactoryInstance = await lectureFactory()
-        const currentNFTid = await lectureFactoryInstance.idCount()
+        const currentNFTid = await lectureFactoryInstance._tokenIds()
 
-        for (let i = 1; i <= currentNFTid; i++) {
+        for (let i = 0; i < currentNFTid; i++) {
             arrayIds.push(i)
         }
 
@@ -84,8 +114,20 @@ class Lecture {
         }
 
         const ammount = await lectureFactoryInstance.balanceOfBatch(arrayAddress, arrayIds)
+        let lectures = await this.getLectures()
+        for (let i = 0; i < ammount.length; i++) {
+            if (ammount[i] === 1) {
+                lectures[i] = {...lectures[i], attendance: true}
+            }
+            else if (ammount[i] === 0) {
+                lectures[i] = {...lectures[i], attendance: false}
+            }
+            else {
+                throw new Error(`Quantidade para a palestra de id ${i} não encontrado`)
+            }
+        }
 
-        return ammount
+        return lectures
     }
 }
 
