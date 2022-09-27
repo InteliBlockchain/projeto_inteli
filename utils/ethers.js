@@ -60,14 +60,14 @@ const person = async (ra) => {
     return personInstance
 }
 
-const lecture = async (addrs) => {
-    const { provider, signer } = await blockchainConnection()
+// const lecture = async (addrs) => {
+//     const { provider, signer } = await blockchainConnection()
 
-    const lecture = new ethers.Contract(addrs, lectureAbi, provider)
-    const lectureInstance = lecture.connect(signer)
+//     const lecture = new ethers.Contract(addrs, lectureAbi, provider)
+//     const lectureInstance = lecture.connect(signer)
 
-    return lectureInstance
-}
+//     return lectureInstance
+// }
 
 module.exports = {
     blockchainConnection,
@@ -75,5 +75,4 @@ module.exports = {
     lectureFactory,
     accessCampus,
     person,
-    lecture,
 }

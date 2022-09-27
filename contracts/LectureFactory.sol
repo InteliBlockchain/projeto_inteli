@@ -5,11 +5,10 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
 contract LectureFactory is ERC1155 {
     address public owner;
-    address[] arrayUsers;
 
-    address[] lectures;
-    int256 idCount;
-    // mapping(idCount => arrayUsers) public lectureOwners;
+    uint256 public idCount;
+
+    mapping(uint256 => address[]) owners;
 
     modifier isOwner() {
         require(owner == msg.sender, "Not owner");
@@ -20,38 +19,31 @@ contract LectureFactory is ERC1155 {
         owner = msg.sender;
     }
 
-    function createLecture(
-        address[] memory _arrayUsers,
-        string memory _ipfsAddress
-    ) public isOwner {
+    function createLecture(address[] memory _arrayUsers) public isOwner {
         idCount += 1;
         for (uint256 i = 0; i < _arrayUsers.length; i++) {
             _mint(_arrayUsers[i], idCount, 1, "");
-            lectureOwners;
+            owners[idCount] = _arrayUsers;
         }
     }
 
     function burnNFT(address _address, uint256 _id) public isOwner {
         _burn(_address, _id, 1);
+        address[] storage NFTowners = owners[_id];
+        for (uint256 i = 0; i < NFTowners.length; i++) {
+            if (NFTowners[i] == _address) {
+                NFTowners[i] = NFTowners[NFTowners.length - 1];
+                NFTowners.pop();
+            }
+        }
+        owners[_id] = NFTowners;
     }
 
-    function viewLectures() public view isOwner returns (address[] memory) {
-        return (lectures);
-    }
-
-    function viewBalance(adress[] memory _arrayUsers, uint256[] _id)
+    function viewLectureOwners(uint256 _id)
         public
-        isOwner
+        view
+        returns (address[] memory)
     {
-        balanceOfBatch(_arrayUsers, _id);
+        return (owners[_id]);
     }
-
-    // function viewLectureOwners()
-    //     public
-    //     view
-    //     idCount
-    //     returns (address[] memory)
-    // {
-    //     return (lectureOwners.arrayUsers);
-    // }
 }
