@@ -36,28 +36,5 @@ router.get(
   lectureController.getLectures
 );
 
-//Queimar uma NFT de palestras
-router.post(
-    "/burnNFT",
-    [body("nft", "NFT é necessário").exists({ checkFalsy: true })],
-    studentAuth.unsureAuthenticated,
-    lectureController.burnNFT
-);
-
-//Verificar todos os RAS que participaram de uma palestra
-router.get(
-    "/getRas/:lecture",
-    studentAuth.unsureAuthenticated,
-    lectureController.getLectureRas
-);
-
-//Atualizar o URI
-router.put(
-    "/changeURI",
-    [body("nsei", "Nsei é necessário").exists({ checkFalsy: true })],
-    studentAuth.unsureAuthenticated,
-    lectureController.changeURI
-);
-
 //Exporta o ROUTER
 module.exports = router;

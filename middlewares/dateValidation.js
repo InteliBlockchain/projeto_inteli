@@ -27,7 +27,7 @@ const dateValidationParams = (req, res, next) => {
   const {date} = req.params
 
   if(date) {
-    const formatedDate = new Date(req.body.date)
+    const formatedDate = new Date(date)
     if(formatedDate == 'Invalid Date') {
       res.status(500).send("Date is invalid")
     } else {
