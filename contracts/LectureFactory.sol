@@ -11,7 +11,7 @@ contract LectureFactory is ERC1155 {
     using Counters for Counters.Counter; 
     Counters.Counter public _tokenIds; 
 
-    mapping(uint256 => address[]) owners;
+    mapping(uint256 => address[]) public owners;
 
     modifier isOwner() {
         require(owner == msg.sender, "Not owner");
@@ -50,13 +50,5 @@ contract LectureFactory is ERC1155 {
             }
         }
         owners[_id] = NFTowners;
-    }
-
-    function viewLectureOwners(uint256 _id)
-        public
-        view
-        returns (address[] memory)
-    {
-        return (owners[_id]);
     }
 }
