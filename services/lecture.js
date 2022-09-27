@@ -1,19 +1,46 @@
 const axios = require('axios')
 // Compiled smart contracts
-const { lectureFactory, person, lecture, inteliFactory, blockchainConnection } = require('../utils/ethers')
+const { lectureFactory, inteliFactory } = require('../utils/ethers')
 
-const { createHash } = require('crypto')
-
-const { connectToDatabase } = require('../database')
 const { storeNFT } = require('../ethereum/apis/nftStorage')
-const {
-    lectureFactory,
-} = require('../utils/ethers')
+const { encryptLecture } = require('../utils/encrypt')
 
 class Lecture {
+    async createLecture(file, lectureName, ras, description) {
+        const inteliFactoryInstance = await inteliFactory()
+        const lectureFactoryInstance = await lectureFactory()
 
-    async createLecture() {
-        //Código Aqui
+        const wallets = []
+        const rasWithoutWallet = []
+
+        for (let i = 0; i < ras.length; i++) {
+            // Get de todas as wallets a partir do Array da Ras
+            const wallet = await inteliFactoryInstance.getWallet(ras[i])
+
+            // Checar se a wallet existe
+            if (wallet != '0x0000000000000000000000000000000000000000') {
+                // Adicionar a wallet ao array
+                wallets.push(wallet)
+            } else {
+                rasWithoutWallet.push(ras[i])
+            }
+        }
+
+        // caso algum dos RAs passados não corresponda a uma carteira:
+        if (rasWithoutWallet.length > 0) {
+            const formatedRasWithoutWallet = rasWithoutWallet.join(', ')
+            throw new Error("Erro! Não encontradas carteiras para os seguintes R.A's: " + formatedRasWithoutWallet)
+        }
+
+        const { hashedName } = encryptLecture(lectureName)
+
+        // Criar nova NFT no NFT Storage (devolve url)
+        const result = await storeNFT(file, hashedName, description)
+        const parsedResult = JSON.parse(JSON.stringify(result))
+
+        // Get da url e executa função createLecture do contrato LectureFactory
+        const newLecture = await lectureFactoryInstance.createLecture(wallets, parsedResult.url)
+        await newLecture.wait()
     }
 
     async burnNFT(addresses) {
@@ -26,10 +53,8 @@ class Lecture {
 
     // Get all the lectures
     async getLectures() {
-
         //Código Aqui
     }
-
 
     async getLectureRas(NFTid) {
         const lectureFactoryInstance = await lectureFactory()
@@ -46,7 +71,7 @@ class Lecture {
         const lectureFactoryInstance = await lectureFactory()
         const currentNFTid = await lectureFactoryInstance.idCount()
 
-        for (let i = 1; i <= currentNFTid; i++){
+        for (let i = 1; i <= currentNFTid; i++) {
             arrayIds.push(i)
         }
 
@@ -61,11 +86,6 @@ class Lecture {
         const ammount = await lectureFactoryInstance.balanceOfBatch(arrayAddress, arrayIds)
 
         return ammount
-
-    }
-
-    async changeURI() {
-        //Código Aqui
     }
 }
 
