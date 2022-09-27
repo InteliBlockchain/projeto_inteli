@@ -19,9 +19,9 @@ class Lecture {
     async burnNFT(addresses) {
         const lectureFactoryInstance = await lectureFactory()
 
-        addresses.map(async (address) => {
-            await lectureFactoryInstance.burnNFT(address)
-        })
+        for (let i = 0; i < addresses.length; i++) {
+            await lectureFactoryInstance.burnNFT(addresses[i])
+        }
     }
 
     // Get all the lectures
@@ -54,7 +54,7 @@ class Lecture {
             arrayAddress.push(address)
         }
 
-        if (len(arrayIds) || len(arrayAddress)) {
+        if (arrayIds.length == 0 || arrayAddress.length == 0) {
             throw new Error('Array não completo')
         }
 
