@@ -11,7 +11,6 @@ const {
     inteliFactory,
     accessCampus,
     person,
-    lecture,
     lectureFactory,
     blockchainConnection,
 } = require('../utils/ethers')
