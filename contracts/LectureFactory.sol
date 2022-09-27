@@ -2,11 +2,14 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/utils/Counters.sol"; 
 
 contract LectureFactory is ERC1155 {
     address public owner;
 
-    uint256 public idCount;
+    mapping (uint256 => string) private _tokenURIs;
+    using Counters for Counters.Counter; 
+    Counters.Counter public _tokenIds; 
 
     mapping(uint256 => address[]) owners;
 
@@ -15,17 +18,27 @@ contract LectureFactory is ERC1155 {
         _;
     }
 
-    constructor(string memory _ipfsLink) ERC1155(_ipfsLink) {
+    constructor() ERC1155("") {
         owner = msg.sender;
     }
 
-    function createLecture(address[] memory _arrayUsers) public isOwner {
-        idCount += 1;
+    function createLecture(address[] memory _arrayUsers, string memory tokenURI) public isOwner {
+        uint256 newItemId = _tokenIds.current(); 
         for (uint256 i = 0; i < _arrayUsers.length; i++) {
-            _mint(_arrayUsers[i], idCount, 1, "");
-            owners[idCount] = _arrayUsers;
+            _mint(_arrayUsers[i], newItemId, 1, "");
+            owners[newItemId] = _arrayUsers;
         }
+        _setTokenUri(newItemId, tokenURI); 
+        _tokenIds.increment();
     }
+
+    function uri(uint256 tokenId) override public view returns (string memory) { 
+        return(_tokenURIs[tokenId]); 
+    } 
+
+    function _setTokenUri(uint256 tokenId, string memory tokenURI) private {
+         _tokenURIs[tokenId] = tokenURI; 
+    } 
 
     function burnNFT(address _address, uint256 _id) public isOwner {
         _burn(_address, _id, 1);

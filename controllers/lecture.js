@@ -7,15 +7,7 @@ const Lecture = new lectureService.Lecture()
 const createLecture = async (req, res) => {
     //Pega as infos da requisição
     const { name, ras, description } = req.body
-    //Valida se algum paremetro é inválido
-    const errors = validationResult(req)
-
-    if (!errors.isEmpty()) {
-        return res.status(400).json({
-            error: errors.errors[0].msg,
-        })
-       
-    }
+   
 
     try {
         //Tratamento das respostas do método da classe
@@ -39,10 +31,13 @@ const getLecturesStudent = async (req, res) => {
 }
 
 const getLectures = async (req, res) => {
+    //Pega as infos da requisição
+    const { name, ras, description } = req.body
+
     try {
         //Tratamento das respostas do método da classe
-        const lectures = await Lecture.getLectures()
-        res.send(lectures)
+        await Lecture.createLecture(req.file, name, ras, description);
+        res.send("Palestra criada e usuários cadastrados")
     } catch (err) {
         res.status(500).send(err.message)
     }
