@@ -13,9 +13,14 @@ contract AccessCampus {
         _;
     }
 
-    constructor(uint256 _tokenAmount) {
+    constructor() {
         owner = msg.sender;
-        token = new AccessERC20(_tokenAmount, address(this));
+        token = new AccessERC20(address(this));
+    }
+
+    function createToken(uint _tokenAmount) public isOwner returns (bool) {
+        token.createToken(_tokenAmount); 
+        return true;
     }
 
     function givePresence(address _to) public isOwner returns (bool) {
@@ -35,5 +40,9 @@ contract AccessCampus {
     function seePresences(address _student) public view returns (uint256) {
         uint256 presences = token.balanceOf(_student);
         return presences;
+    }
+
+    function totalSupply() public view returns (uint256) {
+        return token.totalSupply();
     }
 }

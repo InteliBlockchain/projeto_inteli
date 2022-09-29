@@ -10,7 +10,7 @@ AccessCampus contract: consolidation of Person IDs checking in *OR* out in a giv
         - exits: log of check-outs in a given day
     . methods: create and retrieve events and register in state variable
 */
-contract AccessCampus {
+contract OldAccessCampus {
     address public owner;
     struct Access {
         address userAddress;

@@ -1,9 +1,12 @@
 const axios = require('axios')
 // Compiled smart contracts
 const { lectureFactory, inteliFactory } = require('../utils/ethers')
+const { walletDoesNotExistsValidation } = require('../utils/validation')
 
 const { storeNFT } = require('../ethereum/apis/nftStorage')
 const { encryptLecture, decodeLecture } = require('../utils/encrypt')
+
+const { ethers } = require('ethers')
 
 class Lecture {
     async createLecture(file, lectureName, ras, description) {
@@ -55,28 +58,26 @@ class Lecture {
     async getLectures() {
         const lectureFactoryInstance = await lectureFactory()
         const currentId = await lectureFactoryInstance._tokenIds()
+        const formatedId = ethers.BigNumber.from(currentId).toNumber()
+
         let lectures = []
 
-        for (let i = 0; i < currentId ; i++) {
+        for (let i = 0; i < formatedId; i++) {
             const uri = await lectureFactoryInstance.uri(i)
-            if (uri === "") {
+            if (uri === '') {
                 throw new Error(`Nenhuma uri para o id ${i}`)
-            }
-            else {
-                const formatedIpfsLink =
-                'https://ipfs.io/ipfs/' + uri.slice(7)
-                const response = await fetch(formatedIpfsLink)
-                const NFTMetaDado = await response.json()
+            } else {
+                const formatedIpfsLink = 'https://ipfs.io/ipfs/' + uri.slice(7)
+                const { data: NFTMetaDado } = await axios.get(formatedIpfsLink)
                 const decodedName = decodeLecture(NFTMetaDado.name)
                 lectures.push({
                     lectureName: decodedName,
-                    lectureId: i
+                    lectureId: i,
                 })
             }
         }
 
         return lectures
-
     }
 
     async getLectureRas(NFTid) {
@@ -94,18 +95,23 @@ class Lecture {
         return ras
     }
 
-    async getLecturesStudent(address) {
-        let arrayIds = []
-        let arrayAddress = []
+    async getLecturesStudent(ra) {
+        const inteliFactoryInstance = await inteliFactory()
+        const address = inteliFactoryInstance.getWallet(ra)
+        walletDoesNotExistsValidation(address)
 
         const lectureFactoryInstance = await lectureFactory()
         const currentNFTid = await lectureFactoryInstance._tokenIds()
+        const formatedNumber = ethers.BigNumber.from(currentNFTid).toNumber()
 
-        for (let i = 0; i < currentNFTid; i++) {
+        let arrayIds = []
+        let arrayAddress = []
+
+        for (let i = 0; i < formatedNumber; i++) {
             arrayIds.push(i)
         }
 
-        for (i in arrayIds) {
+        for (let i = 0; i < arrayIds.length; i++) {
             arrayAddress.push(address)
         }
 
@@ -113,16 +119,18 @@ class Lecture {
             throw new Error('Array não completo')
         }
 
-        const ammount = await lectureFactoryInstance.balanceOfBatch(arrayAddress, arrayIds)
+        const amount = await lectureFactoryInstance.balanceOfBatch(arrayAddress, arrayIds)
+      
         let lectures = await this.getLectures()
-        for (let i = 0; i < ammount.length; i++) {
-            if (ammount[i] === 1) {
-                lectures[i] = {...lectures[i], attendance: true}
-            }
-            else if (ammount[i] === 0) {
-                lectures[i] = {...lectures[i], attendance: false}
-            }
-            else {
+      
+        for (let i = 0; i < amount.length; i++) {
+            const currentLecture = ethers.BigNumber.from(amount[i]).toNumber()
+
+            if (currentLecture === 1) {
+                lectures[i] = { ...lectures[i], attendance: true }
+            } else if (currentLecture === 0) {
+                lectures[i] = { ...lectures[i], attendance: false }
+            } else {
                 throw new Error(`Quantidade para a palestra de id ${i} não encontrado`)
             }
         }

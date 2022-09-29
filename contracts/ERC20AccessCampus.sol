@@ -12,11 +12,17 @@ contract AccessERC20 is ERC20 {
         _;
     }
 
-    constructor(uint256 _initialSupply, address _ownerFrom)
+    constructor(address _ownerFrom)
         ERC20("Access", "ACC")
     {
         _owner = _ownerFrom;
-        _mint(msg.sender, _initialSupply);
+    }
+
+    function createToken(uint _amount) public isOwner returns (bool) {
+        _mint(msg.sender, _amount);
+        
+        return true;
+
     }
 
     function decimals() public view virtual override returns (uint8) {
