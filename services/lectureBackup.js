@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { lectureFactory, person, lecture, inteliFactory, blockchainConnection } = require('../utils/ethers')
+const { lectureFactory, person, inteliFactory } = require('../utils/ethers')
 
 const { createHash } = require('crypto')
 

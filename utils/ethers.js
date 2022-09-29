@@ -4,6 +4,7 @@ const { ethers } = require('ethers')
 const { abi: inteliFactoryAbi } = require('../build/contracts/InteliFactory.json')
 const { abi: lectureFactoryAbi } = require('../build/contracts/LectureFactory.json')
 const { abi: accessCampusAbi } = require('../build/contracts/AccessCampus.json')
+
 const { abi: personAbi } = require('../build/contracts/Person.json')
 
 const { addresses } = require('../contractsAddresses.json')
