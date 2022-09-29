@@ -1,15 +1,3 @@
-// var InteliFactory = artifacts.require('./InteliFactory.sol')
-// var AccessCampus = artifacts.require('./AccessCampus.sol')
-// var LectureFactory = artifacts.require('./LectureFactory.sol')
-
-// module.exports = function (deployer) {
-//     deployer.deploy(InteliFactory)
-//     deployer.deploy(AccessCampus)
-//     deployer.deploy(LectureFactory)
-// }
-
-// ***********************************************************
-
 var InteliFactory = artifacts.require('./InteliFactory.sol')
 var LectureFactory = artifacts.require('./LectureFactory.sol')
 var AccessCampus = artifacts.require('./AccessCampus.sol')

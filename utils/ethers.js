@@ -4,7 +4,6 @@ const { ethers } = require('ethers')
 const { abi: inteliFactoryAbi } = require('../build/contracts/InteliFactory.json')
 const { abi: lectureFactoryAbi } = require('../build/contracts/LectureFactory.json')
 const { abi: accessCampusAbi } = require('../build/contracts/AccessCampus.json')
-const { abi: lectureAbi } = require('../build/contracts/Lecture.json')
 const { abi: personAbi } = require('../build/contracts/Person.json')
 
 const { addresses } = require('../contractsAddresses.json')
@@ -59,15 +58,6 @@ const person = async (ra) => {
     
     return personInstance
 }
-
-// const lecture = async (addrs) => {
-//     const { provider, signer } = await blockchainConnection()
-
-//     const lecture = new ethers.Contract(addrs, lectureAbi, provider)
-//     const lectureInstance = lecture.connect(signer)
-
-//     return lectureInstance
-// }
 
 module.exports = {
     blockchainConnection,

@@ -116,13 +116,13 @@
         1485
       ],
       "ERC165": [
-        1826
+        2589
       ],
       "IERC1155Receiver": [
         1385
       ],
       "IERC165": [
-        1838
+        2601
       ]
     },
     "id": 1486,
@@ -159,7 +159,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 1486,
-        "sourceUnit": 1827,
+        "sourceUnit": 2590,
         "src": "167:49:5",
         "symbolAliases": [],
         "unitAlias": ""
@@ -175,7 +175,7 @@
                 "295:6:5"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1826,
+              "referencedDeclaration": 2589,
               "src": "295:6:5"
             },
             "id": 1458,
@@ -212,8 +212,8 @@
         "linearizedBaseContracts": [
           1485,
           1385,
-          1826,
-          1838
+          2589,
+          2601
         ],
         "name": "ERC1155Receiver",
         "nameLocation": "276:15:5",
@@ -221,8 +221,8 @@
         "nodes": [
           {
             "baseFunctions": [
-              1825,
-              1837
+              2588,
+              2600
             ],
             "body": {
               "id": 1483,
@@ -378,7 +378,7 @@
                         "memberLocation": "571:17:5",
                         "memberName": "supportsInterface",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 1825,
+                        "referencedDeclaration": 2588,
                         "src": "565:23:5",
                         "typeDescriptions": {
                           "typeIdentifier": "t_function_internal_view$_t_bytes4_$returns$_t_bool_$",
@@ -439,7 +439,7 @@
                     "463:6:5"
                   ],
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 1826,
+                  "referencedDeclaration": 2589,
                   "src": "463:6:5"
                 },
                 {
@@ -449,7 +449,7 @@
                     "471:7:5"
                   ],
                   "nodeType": "IdentifierPath",
-                  "referencedDeclaration": 1838,
+                  "referencedDeclaration": 2601,
                   "src": "471:7:5"
                 }
               ],
@@ -543,7 +543,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-09-27T14:34:58.911Z",
+  "updatedAt": "2022-09-29T01:40:43.563Z",
   "devdoc": {
     "details": "_Available since v3.1._",
     "kind": "dev",

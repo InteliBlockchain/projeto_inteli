@@ -312,7 +312,7 @@
         1344
       ],
       "IERC165": [
-        1838
+        2601
       ]
     },
     "id": 1345,
@@ -337,7 +337,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 1345,
-        "sourceUnit": 1839,
+        "sourceUnit": 2602,
         "src": "135:47:1",
         "symbolAliases": [],
         "unitAlias": ""
@@ -353,7 +353,7 @@
                 "372:7:1"
               ],
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 1838,
+              "referencedDeclaration": 2601,
               "src": "372:7:1"
             },
             "id": 1228,
@@ -374,7 +374,7 @@
         "id": 1344,
         "linearizedBaseContracts": [
           1344,
-          1838
+          2601
         ],
         "name": "IERC1155",
         "nameLocation": "360:8:1",
@@ -1756,7 +1756,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-09-27T14:34:58.867Z",
+  "updatedAt": "2022-09-29T01:40:43.539Z",
   "devdoc": {
     "details": "Required interface of an ERC1155 compliant contract, as defined in the https://eips.ethereum.org/EIPS/eip-1155[EIP]. _Available since v3.1._",
     "events": {
