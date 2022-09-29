@@ -41,4 +41,8 @@ contract AccessCampus {
         uint256 presences = token.balanceOf(_student);
         return presences;
     }
+
+    function totalSupply() public view returns (uint256) {
+        return token.totalSupply();
+    }
 }
