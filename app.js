@@ -32,6 +32,9 @@ app.use("/lecture", lectureRouter);
 const inteliRouter = require("./routes/inteli");
 app.use("/inteli", inteliRouter);
 
+const ERC20outer = require("./routes/accessCampusERC20");
+app.use("/ERC20", ERC20outer);
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta http://localhost:${PORT}`);
 });
