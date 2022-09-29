@@ -1,19 +1,10 @@
 // Compiled smart contracts
-const abi = require('../build/contracts/InteliFactory.json')
 const { ethers } = require('ethers')
 
 const structDecoder = require('../ethereum/utils/structDecoder')
 
-const contractsAdresses = require('../contractsAddresses.json')
-
 //Import the new instances
-const {
-    inteliFactory,
-    accessCampus,
-    person,
-    lectureFactory,
-    blockchainConnection,
-} = require('../utils/ethers')
+const { inteliFactory, accessCampus, person, blockchainConnection } = require('../utils/ethers')
 
 // Import new validations
 const { walletDoesNotExistsValidation, studentDoesNotExistsValidation } = require('../utils/validation')
@@ -53,7 +44,7 @@ class Student {
 
         // Validates if the wallet exists
         walletExistsValidation(wallet, ra)
-        
+
         await instance.createStudent(ra)
     }
 
