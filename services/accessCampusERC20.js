@@ -1,6 +1,6 @@
+const { ethers } = require('ethers')
 // Import contract's intances
 const { accessCampus, inteliFactory } = require('../utils/ethers')
-
 // Import new validations
 const { walletDoesNotExistsValidation } = require('../utils/validation')
 
@@ -9,6 +9,16 @@ class AccessCampusERC20 {
         const accessCampusInstance = await accessCampus()
 
         await accessCampusInstance.createToken(qnt)
+    }
+
+    async totalSupply() {
+        const accessCampusInstance = await accessCampus()
+
+        let totalSupply = await accessCampusInstance.totalSupply()
+
+        totalSupply = ethers.BigNumber.from(totalSupply).toNumber()
+
+        return totalSupply
     }
 
     async givePresence(ra) {
@@ -38,7 +48,9 @@ class AccessCampusERC20 {
         const studentWallet = await inteliFactoryInstance.getWallet(ra)
         walletDoesNotExistsValidation(studentWallet)
 
-        const amount = await accessCampusInstance.seePresences(studentWallet)
+        let amount = await accessCampusInstance.seePresences(studentWallet)
+
+        amount = ethers.BigNumber.from(amount).toNumber()
 
         return amount
     }
