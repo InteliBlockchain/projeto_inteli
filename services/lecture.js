@@ -3,7 +3,7 @@ const axios = require('axios')
 const { lectureFactory, inteliFactory } = require('../utils/ethers')
 const { walletDoesNotExistsValidation } = require('../utils/validation')
 
-const { storeNFT } = require('../ethereum/apis/nftStorage')
+const { storeNFT } = require('../utils/apis/nftStorage')
 const { encryptLecture, decodeLecture } = require('../utils/encrypt')
 
 const { ethers } = require('ethers')

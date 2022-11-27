@@ -1,7 +1,7 @@
 // Compiled smart contracts
-const { ethers } = require('ethers')
+const { ethers, utils } = require('ethers')
 
-const structDecoder = require('../ethereum/utils/structDecoder')
+const structDecoder = require('../utils/structDecoder')
 
 //Import the new instances
 const { inteliFactory, accessCampus, person, blockchainConnection } = require('../utils/ethers')
@@ -52,13 +52,14 @@ class Student {
     async removeStudent(ra) {
         // Contract instance
         const inteliFactoryInstance = await inteliFactory()
-        // Remove the student
-        await inteliFactoryInstance.removeStudent(ra)
-
         // Contract instance
         const personInstance = await person(ra)
         // Erase the student
         await personInstance.eraseMe()
+
+        // Remove the student
+        await inteliFactoryInstance.removeStudent(ra)
+
     }
 
     // Register check in of a student in a specific date and time
@@ -190,8 +191,8 @@ class Student {
         const bigNumberBalance = await provider.getBalance(wallet)
 
         // Format the balance to a string
-        const formatedBalance = ethers.BigNumber.from(bigNumberBalance.toString())
-        return ethers.utils.formatEther(formatedBalance.toString())
+        // const formatedBalance = ethers.BigNumber.from(bigNumberBalance.toString())
+        return ethers.utils.formatEther(bigNumberBalance)
     }
 
     // Transfer a quantity of money from a wallet to another
@@ -199,6 +200,8 @@ class Student {
         // Get the sender student wallet
         const personInstance = await person(from)
         const fromWallet = await this.getWallet(from)
+
+        
 
         let toWallet = null
         // Get the receiver student wallet
@@ -219,8 +222,21 @@ class Student {
             throw new Error('Carteiras iguais, transferência inválida')
         }
 
+        if (await this.balance(from) < quantity) {
+            throw new Error("Quantidade na carteira insuficiente!")
+        }
+
+        // const quantityInEthers = quantity * (10**18)
+        // console.log("quantityInEthers" ,quantityInEthers)
+
+        console.log(quantity.toString())
+        console.log(utils.parseEther("5.0"))
+
+
         // Transfer the money
-        await personInstance.transferMoney(toWallet, quantity)
+        await personInstance.transferMoney(toWallet, { value: utils.parseEther(quantity.toString()) })
+
+
     }
 }
 

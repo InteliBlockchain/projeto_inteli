@@ -34,12 +34,12 @@ contract Person is ERC1155Holder {
         return address(this).balance;
     }
 
-    function transferMoney(address payable _to, uint256 _value)
+    function transferMoney(address payable _to)
         external
         isOwner
         payable
     {
-        _to.transfer(_value);
+        _to.transfer(msg.value);
     }
 
     receive() external payable {

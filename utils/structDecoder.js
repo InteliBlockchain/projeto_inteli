@@ -1,14 +1,12 @@
-const compiledAccessCampus = require('../artifacts/ethereum/contracts/AccessCampus.sol/AccessCampus.json')
-const compiledInteliFactory = require('../artifacts/ethereum/contracts/InteliFactory.sol/InteliFactory.json')
-const compiledLecture = require('../artifacts/ethereum/contracts/Lecture.sol/Lecture.json')
-const compiledLectureFactory = require('../artifacts/ethereum/contracts/LectureFactory.sol/LectureFactory.json')
-const compiledPerson = require('../artifacts/ethereum/contracts/Person.sol/Person.json')
+const compiledAccessCampus = require('../build/contracts/AccessCampus.json')
+const compiledInteliFactory = require('../build/contracts/InteliFactory.json')
+const compiledLectureFactory = require('../build/contracts/LectureFactory.json')
+const compiledPerson = require('../build/contracts/Person.json')
 
 const createObject = (contractName, functionName, values) => {
     let contract
     contract = (contractName === 'accessCampus') ? compiledAccessCampus : contract
     contract = (contractName === 'inteliFactory') ? compiledInteliFactory : contract
-    contract = (contractName === 'lecture') ? compiledLecture : contract
     contract = (contractName === 'lectureFactory') ? compiledLectureFactory : contract
     contract = (contractName === 'person') ? compiledPerson : contract
     
